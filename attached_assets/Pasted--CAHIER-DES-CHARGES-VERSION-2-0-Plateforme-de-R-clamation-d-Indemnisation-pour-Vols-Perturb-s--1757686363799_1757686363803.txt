@@ -1,0 +1,854 @@
+# CAHIER DES CHARGES - VERSION 2.0
+## Plateforme de Réclamation d'Indemnisation pour Vols Perturbés
+
+---
+
+## 1. PRÉSENTATION DU PROJET
+
+### 1.1 Contexte
+Développement d'une plateforme web multilingue permettant aux passagers aériens de réclamer automatiquement des indemnisations pour vols perturbés (retards, annulations, refus d'embarquement) selon les réglementations européenne (CE 261/2004) et israélienne (Aviation Services Law 2012).
+
+### 1.2 Objectifs
+- Simplifier le processus de réclamation pour les passagers
+- Automatiser la vérification des droits à indemnisation
+- Calculer automatiquement les montants dus
+- Gérer les dossiers de réclamation de bout en bout
+- Maximiser le taux de succès des réclamations
+
+### 1.3 Langues supportées
+- **Hébreu** (עברית) - Langue principale avec support RTL
+- **Français**
+- **Anglais**
+- **Espagnol**
+
+### 1.4 Cibles
+- Passagers voyageant vers/depuis l'Europe
+- Passagers voyageant vers/depuis Israël
+- Focus initial : marchés israélien et francophone
+
+---
+
+## 2. RÉGLEMENTATIONS APPLICABLES - MISES À JOUR 2025
+
+### 2.1 Règlement Européen CE 261/2004
+
+#### 2.1.1 Conditions d'application
+- **Vols concernés** :
+  - Tous les vols au départ d'un aéroport de l'UE (toutes compagnies)
+  - Vols à destination de l'UE opérés par une compagnie européenne
+  - Applicable aussi en Islande, Norvège et Suisse
+
+**Délais de prescription** (variable selon les pays) :
+- France : 5 ans
+- Allemagne : 3 ans (fin d'année civile)
+- Espagne : 5 ans
+- Italie : 2 ans
+- Pays-Bas : 2 ans
+
+#### 2.1.2 Montants d'indemnisation
+
+**Pour retards de plus de 3 heures à l'arrivée :**
+
+| Distance du vol | Montant |
+|----------------|---------|
+| Jusqu'à 1 500 km | 250€ |
+| 1 500 - 3 500 km | 400€ |
+| Plus de 3 500 km | 600€ |
+
+**Réduction de 50%** si le réacheminement limite le retard à :
+- 2h pour vols < 1 500 km
+- 3h pour vols 1 500-3 500 km
+- 4h pour vols > 3 500 km
+
+#### 2.1.3 Assistance obligatoire
+**Retard de 2h+ :**
+- Repas et rafraîchissements
+- 2 appels téléphoniques/emails
+- Hébergement si nécessaire
+- Transport hôtel-aéroport
+
+**Obligation de réacheminement** : Les compagnies doivent explorer toutes les options, y compris la réservation sur des vols concurrents (CJUE C-74/19, 2020)
+
+#### 2.1.4 Circonstances extraordinaires (pas d'indemnisation)
+- Conditions météo extrêmes
+- Risques de sécurité
+- Grèves externes (contrôle aérien) - mais PAS les grèves internes
+- Instabilité politique
+- Défauts de fabrication cachés (seule exception technique)
+- **Note importante** : Le décès d'un membre d'équipage n'est PAS une circonstance extraordinaire (CJUE C-156/22, 2023)
+
+#### 2.1.5 Révisions en cours (2025)
+**Projet de révision controversé** :
+- Proposition : Porter le seuil de compensation de 3h à 5h de retard
+- Limitation hébergement à 3 nuits maximum
+- Bagage à main gratuit obligatoire
+- Opposition forte des associations de consommateurs
+
+### 2.2 Loi Israélienne sur les Services Aériens (2012)
+
+#### 2.2.1 Conditions d'application
+- Vols au départ ou à destination d'Israël
+- Sauf si compensation déjà reçue dans un autre pays
+
+**Changements récents** :
+- Amendement "Iron Swords" (2024) proposé suite au conflit
+- Pression des compagnies pour assouplir les compensations
+- Délai de réclamation : 4 ans
+- Délai de paiement : 45 jours après demande écrite
+
+#### 2.2.2 Montants d'indemnisation
+
+**Pour annulation ou retard de 8h+ (montants 2024) :**
+
+| Catégorie | Distance | Montant |
+|-----------|----------|---------|
+| A | Jusqu'à 2 000 km | 1 490 NIS |
+| B | 2 000 - 4 500 km | 2 390 NIS |
+| C | Plus de 4 500 km | 3 580 NIS |
+
+**Note** : Ces montants sont mis à jour annuellement par les autorités israéliennes.
+
+**Réduction de 50%** si le retard à destination finale est inférieur à :
+- 4h (catégorie A)
+- 5h (catégorie B)
+- 6h (catégorie C)
+
+**Dommages exemplaires** : Jusqu'à 11 540 NIS (2024) peuvent être réclamés sans preuve de préjudice en cas de violation des obligations par la compagnie.
+
+#### 2.2.3 Assistance selon durée du retard
+
+**Retard 2-5h :**
+- Nourriture et boissons
+- 2 appels/emails
+
+**Retard 5-8h :**
+- Assistance ci-dessus +
+- Bon pour vol futur OU
+- Vol alternatif OU
+- Remboursement
+
+**Retard 8h+ :**
+- Toute l'assistance +
+- Hébergement
+- Indemnisation financière
+
+#### 2.2.4 Exceptions
+- Circonstances extraordinaires
+- Grève
+- Respect du Shabbat/jours fériés
+- Notification 14 jours avant
+
+---
+
+## 3. STACK TECHNOLOGIQUE RECOMMANDÉ
+
+### 3.1 Vue d'ensemble
+Stack moderne optimisé pour performance, scalabilité et maintenabilité.
+
+### 3.2 Frontend : Next.js 14 (App Router)
+
+#### Justification du choix
+- **SSR/SSG natif** : SEO optimal crucial pour l'acquisition
+- **Internationalisation native** : Support i18n pour 4 langues
+- **Support RTL intégré** : Essentiel pour l'hébreu
+- **Image Optimization** : Performance automatique
+- **TypeScript first** : Cohérence avec le backend
+
+#### Technologies associées
+```typescript
+// Stack frontend
+- Framework: Next.js 14 avec App Router
+- UI: Tailwind CSS + Shadcn/ui
+- State: Zustand + TanStack Query
+- Forms: React Hook Form + Zod
+- i18n: next-intl
+- Analytics: Posthog
+```
+
+#### Configuration multilingue
+```typescript
+export const i18nConfig = {
+  locales: ['he', 'fr', 'en', 'es'],
+  defaultLocale: 'he',
+  localeDetection: true,
+  domains: [
+    { domain: 'reclaim.co.il', defaultLocale: 'he' },
+    { domain: 'reclaim.fr', defaultLocale: 'fr' },
+  ]
+}
+```
+
+### 3.3 Backend : NestJS avec Fastify
+
+#### Architecture modulaire
+```typescript
+// Structure des modules
+├── claims/
+│   ├── claims.controller.ts
+│   ├── claims.service.ts
+│   ├── claims.module.ts
+│   └── dto/
+├── flights/
+│   ├── flights.service.ts
+│   ├── apis/
+│   │   ├── flightaware.adapter.ts
+│   │   └── aviationstack.adapter.ts
+├── calculations/
+│   ├── eu-calculator.service.ts
+│   └── israel-calculator.service.ts
+└── notifications/
+```
+
+#### Base de données : PostgreSQL + Prisma
+```prisma
+model Claim {
+  id                String   @id @default(cuid())
+  userId            String
+  flightNumber      String
+  flightDate        DateTime
+  departureAirport  String
+  arrivalAirport    String
+  status            ClaimStatus @default(PENDING)
+  calculatedAmountEU  Decimal?  @db.Money
+  calculatedAmountIL  Decimal?  @db.Money
+  selectedJurisdiction Jurisdiction?
+  documents         Document[]
+  timeline          TimelineEvent[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId, status])
+  @@index([flightDate])
+  @@index([createdAt])
+}
+```
+
+### 3.4 Infrastructure & DevOps
+
+#### Architecture AWS recommandée
+```yaml
+# Infrastructure as Code avec CDK
+Production:
+  Frontend:
+    - Vercel (optimisé Next.js)
+    - CDN automatique
+    - Edge Functions pour calculs
+  
+  Backend:
+    - AWS ECS Fargate
+    - Application Load Balancer
+    - Auto-scaling groups
+  
+  Database:
+    - Aurora PostgreSQL Serverless v2
+    - Read replicas pour scalabilité
+    - Backups automatiques
+  
+  Cache:
+    - ElastiCache Redis
+    - TTL 5 min pour APIs vols
+  
+  Storage:
+    - S3 pour documents
+    - CloudFront pour distribution
+```
+
+### 3.5 Services tiers & APIs
+
+#### APIs de données de vol
+```typescript
+// Stratégie multi-provider avec fallback
+class FlightDataService {
+  providers = [
+    { name: 'FlightAware', priority: 1, cost: 0.10 },
+    { name: 'AviationStack', priority: 2, cost: 0.05 },
+    { name: 'FlightStats', priority: 3, cost: 0.08 }
+  ];
+  
+  async getFlightData(flightNumber: string, date: Date) {
+    // Try cache first
+    const cached = await this.cache.get(key);
+    if (cached) return cached;
+    
+    // Try providers in order
+    for (const provider of this.providers) {
+      try {
+        const data = await provider.fetch(flightNumber, date);
+        await this.cache.set(key, data, 300); // 5 min
+        return data;
+      } catch (error) {
+        continue; // Try next provider
+      }
+    }
+  }
+}
+```
+
+#### Authentification : Supabase
+- **Multi-factor authentication** inclus
+- **Social login** (Google, Facebook)
+- **Conformité RGPD** native
+- **Row Level Security** pour isolation données
+
+#### Paiements
+- **Stripe** : Principal (Europe)
+- **PayPal** : Secondaire
+- **Adyen** : Pour Israël (support shekel)
+
+### 3.6 Monitoring & Observabilité
+
+```typescript
+// Stack de monitoring
+- Errors: Sentry
+- APM: Datadog
+- Analytics: PostHog
+- Logs: CloudWatch
+- Uptime: Better Stack
+
+// Instrumentation automatique
+@Injectable()
+export class MetricsInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler) {
+    const start = Date.now();
+    return next.handle().pipe(
+      tap(() => {
+        metrics.histogram('http_request_duration', Date.now() - start, {
+          method: request.method,
+          route: request.route.path,
+          status: response.statusCode
+        });
+      })
+    );
+  }
+}
+```
+
+---
+
+## 4. FONCTIONNALITÉS DÉTAILLÉES
+
+### 4.1 Module de Saisie des Informations de Vol
+
+#### Interface utilisateur adaptative
+```typescript
+// Composant avec support RTL automatique
+export function FlightSearchForm() {
+  const { locale } = useLocale();
+  const isRTL = locale === 'he';
+  
+  return (
+    <form className={cn(
+      "flex flex-col gap-4",
+      isRTL && "rtl"
+    )}>
+      <AutocompleteFlightNumber />
+      <DatePicker 
+        format={getLocaleDateFormat(locale)}
+        minDate={subYears(new Date(), 3)}
+        maxDate={new Date()}
+      />
+    </form>
+  );
+}
+```
+
+#### Validation intelligente
+- Format numéro de vol : IATA/ICAO
+- Limite temporelle : 3 ans (UE) / 4 ans (IL)
+- Vérification existence route via API
+
+### 4.2 Module de Vérification Automatique
+
+#### Flux de vérification
+```mermaid
+graph LR
+    A[Saisie Vol] --> B[Cache Check]
+    B -->|Hit| C[Données Cached]
+    B -->|Miss| D[API FlightAware]
+    D -->|Fail| E[API AviationStack]
+    E -->|Success| F[Calcul Retard]
+    D -->|Success| F
+    F --> G[Déterminer Juridiction]
+    G --> H[Calculer Compensation]
+```
+
+#### Algorithme de calcul multi-juridiction
+```typescript
+async calculateCompensation(flight: FlightData) {
+  const results = {
+    eu: null,
+    israel: null,
+    recommended: null
+  };
+  
+  // Check EU applicability
+  if (this.isEUApplicable(flight)) {
+    results.eu = this.calculateEU261(flight);
+  }
+  
+  // Check Israel applicability
+  if (this.isIsraelApplicable(flight)) {
+    results.israel = this.calculateIsraelASL(flight);
+  }
+  
+  // Recommend best option
+  results.recommended = this.getBestOption(results);
+  
+  return results;
+}
+```
+
+### 4.3 Module de Gestion des Réclamations
+
+#### Workflow automatisé
+1. **Création dossier**
+   - Numéro unique : `CLM-{YEAR}-{RANDOM}`
+   - Statut initial : `ANALYZING`
+
+2. **Collecte documents**
+   - Upload sécurisé S3
+   - OCR automatique (AWS Textract)
+   - Validation format
+
+3. **Génération automatique**
+   - Templates multilingues
+   - Merge données dynamiques
+   - PDF/A pour archivage
+
+4. **Suivi temps réel**
+   ```typescript
+   // WebSocket pour updates live
+   @WebSocketGateway()
+   export class ClaimsGateway {
+     @SubscribeMessage('claim:subscribe')
+     handleSubscribe(client: Socket, claimId: string) {
+       client.join(`claim:${claimId}`);
+     }
+     
+     emitUpdate(claimId: string, update: any) {
+       this.server.to(`claim:${claimId}`).emit('update', update);
+     }
+   }
+   ```
+
+### 4.4 Système de Notifications
+
+#### Canaux multiples
+```typescript
+interface NotificationService {
+  channels: {
+    email: SendGridAdapter,
+    sms: TwilioAdapter,
+    push: OneSignalAdapter,
+    inApp: WebSocketAdapter
+  };
+  
+  async notify(userId: string, event: ClaimEvent) {
+    const preferences = await this.getPreferences(userId);
+    const template = await this.getTemplate(event, preferences.locale);
+    
+    await Promise.all(
+      preferences.channels.map(channel => 
+        this.channels[channel].send(userId, template)
+      )
+    );
+  }
+}
+```
+
+---
+
+## 5. PARCOURS UTILISATEUR OPTIMISÉ
+
+### 5.1 Landing Page
+```typescript
+// Sections dynamiques selon origine
+const LandingPage = () => {
+  const { country } = useGeoLocation();
+  
+  return (
+    <>
+      <HeroSection 
+        title={t('hero.title')}
+        cta={t('hero.cta')}
+        trustSignals={<TrustBadges count="45,000+" />}
+      />
+      
+      <QuickCalculator 
+        defaultCurrency={country === 'IL' ? 'NIS' : 'EUR'}
+      />
+      
+      <Testimonials filtered={country} />
+      
+      <FAQ items={getFAQByCountry(country)} />
+    </>
+  );
+};
+```
+
+### 5.2 Processus de réclamation (5 étapes)
+
+#### Étape 1 : Informations de vol
+- Saisie assistée par autocomplétion
+- Validation temps réel
+- Suggestions si vol non trouvé
+
+#### Étape 2 : Vérification automatique
+- Loading state avec animations
+- Affichage progressif des résultats
+- Explication claire des droits
+
+#### Étape 3 : Informations passager
+- Formulaire adaptatif selon juridiction
+- Sauvegarde automatique (localStorage)
+- Support multi-passagers
+
+#### Étape 4 : Documents
+- Drag & drop intuitif
+- Preview instantané
+- Compression automatique
+
+#### Étape 5 : Confirmation
+- Récapitulatif visuel
+- Signature électronique
+- Options de paiement claires
+
+### 5.3 Dashboard client
+```typescript
+// Composants du dashboard
+<Dashboard>
+  <ClaimsList 
+    filter={statusFilter}
+    sort={sortOrder}
+  />
+  
+  <ClaimTimeline 
+    claim={selectedClaim}
+    interactive={true}
+  />
+  
+  <DocumentsManager 
+    onUpload={handleUpload}
+    onDownload={handleDownload}
+  />
+  
+  <MessagingCenter 
+    claim={selectedClaim}
+    agent={assignedAgent}
+  />
+</Dashboard>
+```
+
+---
+
+## 6. MODÈLE ÉCONOMIQUE
+
+### 6.1 Commission sur succès
+- **Taux standard** : 25% (négociable volume)
+- **Taux premium** : 30% (service express)
+- **Pas de frais** si échec
+- **Facturation** après réception
+
+### 6.2 Services additionnels
+- **Express** : +50€ (traitement 48h)
+- **Juridique** : +20% (cas complexes)
+- **Groupe** : -5% (>10 passagers)
+
+### 6.3 Projections financières
+
+| Métrique | Mois 1-6 | Mois 7-12 | Année 2 |
+|----------|----------|-----------|---------|
+| Réclamations | 500 | 2,000 | 8,000 |
+| Taux succès | 70% | 75% | 80% |
+| Panier moyen | 400€ | 450€ | 500€ |
+| Commission moy. | 100€ | 112€ | 125€ |
+| CA mensuel | 35k€ | 168k€ | 800k€ |
+
+---
+
+## 7. ASPECTS LÉGAUX ET CONFORMITÉ
+
+### 7.1 RGPD et Protection des données
+
+#### Mesures techniques
+```typescript
+// Chiffrement des données sensibles
+class EncryptionService {
+  private algorithm = 'aes-256-gcm';
+  
+  async encryptPII(data: any): Promise<EncryptedData> {
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv(
+      this.algorithm, 
+      this.key, 
+      iv
+    );
+    
+    return {
+      data: cipher.update(JSON.stringify(data)),
+      iv: iv.toString('hex'),
+      tag: cipher.getAuthTag()
+    };
+  }
+}
+```
+
+#### Droits des utilisateurs
+- Export données (JSON/PDF)
+- Suppression compte + données
+- Modification informations
+- Historique des accès
+
+### 7.2 Documents légaux multilingues
+- CGU par juridiction
+- Politique confidentialité
+- Mandat de représentation
+- Contrat de cession créance
+
+### 7.3 Conformité locale
+- **France** : Médiateur tourisme
+- **Israël** : CAAI requirements
+- **UE** : ADR/ODR obligatoire
+
+---
+
+## 8. PLANNING DE DÉVELOPPEMENT
+
+### Phase 1 : MVP (2 mois)
+**Semaines 1-4 : Infrastructure**
+- [x] Setup Next.js + NestJS
+- [x] Configuration Prisma + DB
+- [x] Authentification Supabase
+- [x] CI/CD pipeline
+
+**Semaines 5-8 : Core Features**
+- [ ] Formulaire réclamation
+- [ ] Intégration FlightAware
+- [ ] Calcul EU simple
+- [ ] Génération PDF basique
+
+### Phase 2 : Version complète (2 mois)
+**Semaines 9-12 : Features avancées**
+- [ ] Multi-langue complet
+- [ ] Calcul Israël + comparison
+- [ ] Dashboard client
+- [ ] Upload documents + OCR
+
+**Semaines 13-16 : Polish**
+- [ ] Dashboard admin
+- [ ] Analytics avancées
+- [ ] Optimisations performance
+- [ ] Tests E2E complets
+
+### Phase 3 : Scale (1.5 mois)
+- [ ] App mobile React Native
+- [ ] API publique
+- [ ] Intégrations partenaires
+- [ ] ML pour prédiction succès
+
+---
+
+## 9. BUDGET DÉTAILLÉ
+
+### Développement initial
+| Poste | Durée | Coût |
+|-------|-------|------|
+| Lead Developer | 5.5 mois | 45,000€ |
+| Frontend Dev | 4 mois | 24,000€ |
+| Backend Dev | 4 mois | 28,000€ |
+| UI/UX Designer | 2 mois | 12,000€ |
+| QA Engineer | 2 mois | 10,000€ |
+| DevOps | 1 mois | 8,000€ |
+| **Total Dev** | | **127,000€** |
+
+### Infrastructure (mensuel)
+| Service | Coût/mois |
+|---------|-----------|
+| Vercel Pro | 150€ |
+| AWS (ECS, RDS, S3) | 800€ |
+| APIs vols (1500 req/j) | 1,500€ |
+| Monitoring | 300€ |
+| Supabase | 200€ |
+| Emails/SMS | 400€ |
+| **Total Infra** | **3,350€** |
+
+### Budget marketing initial
+- SEO/Content : 15,000€
+- Google Ads : 20,000€
+- Social Media : 10,000€
+- Influenceurs : 15,000€
+- **Total** : 60,000€
+
+---
+
+## 10. KPIs ET MÉTRIQUES
+
+### Métriques business
+```typescript
+interface BusinessMetrics {
+  conversion: {
+    visitorToLead: number;      // Target: 15%
+    leadToClaim: number;        // Target: 60%
+    claimToSuccess: number;     // Target: 75%
+  };
+  financial: {
+    CAC: number;                // Target: <50€
+    LTV: number;                // Target: >200€
+    avgClaimValue: number;      // Target: 450€
+    monthlyRecurring: number;   // Target: 500k€ (M12)
+  };
+  operational: {
+    avgProcessingTime: number;  // Target: <48h
+    automationRate: number;     // Target: >80%
+    customerSatScore: number;   // Target: >4.5/5
+  };
+}
+```
+
+### Dashboard analytique
+```sql
+-- Requêtes clés pour dashboard
+-- Taux de conversion par source
+SELECT 
+  source,
+  COUNT(*) as visitors,
+  SUM(CASE WHEN claimed THEN 1 ELSE 0 END) as claims,
+  AVG(claim_value) as avg_value
+FROM analytics
+GROUP BY source
+ORDER BY claims DESC;
+
+-- Performance par compagnie
+SELECT 
+  airline,
+  COUNT(*) as total_claims,
+  AVG(success_rate) as avg_success,
+  AVG(processing_days) as avg_days
+FROM claims
+GROUP BY airline
+ORDER BY total_claims DESC;
+```
+
+---
+
+## 11. RISQUES ET MITIGATION
+
+### Matrice des risques
+
+| Risque | Probabilité | Impact | Mitigation |
+|--------|-------------|--------|------------|
+| Changement réglementation UE | Haute | Élevé | Veille juridique, architecture flexible |
+| Résistance compagnies | Moyenne | Moyen | Équipe juridique, precedents |
+| Panne API vols | Faible | Élevé | Multi-provider, cache agressif |
+| Fraude utilisateurs | Moyenne | Moyen | Vérifications, ML detection |
+| Concurrence agressive | Haute | Moyen | Différenciation UX, rapidité |
+
+### Plan de continuité
+```typescript
+// Système de fallback pour APIs critiques
+class ResilientFlightService {
+  async getFlightData(flight: string, date: Date) {
+    const strategies = [
+      () => this.primaryAPI.fetch(flight, date),
+      () => this.secondaryAPI.fetch(flight, date),
+      () => this.manualDataEntry.prompt(flight, date),
+      () => this.historicalData.estimate(flight, date)
+    ];
+    
+    for (const strategy of strategies) {
+      try {
+        return await strategy();
+      } catch (error) {
+        continue;
+      }
+    }
+    
+    throw new NoDataAvailableError();
+  }
+}
+```
+
+---
+
+## 12. ÉQUIPE ET ORGANISATION
+
+### Structure proposée
+```
+CEO/Founder
+├── CTO
+│   ├── Lead Developer
+│   ├── Frontend Team (2)
+│   ├── Backend Team (2)
+│   └── DevOps
+├── Head of Operations
+│   ├── Claims Managers (3)
+│   └── Customer Success (2)
+├── Head of Legal
+│   └── Legal Counsel
+└── Head of Growth
+    ├── Marketing Manager
+    └── Content Creator
+```
+
+### Roadmap de recrutement
+- **Mois 1-2** : Core tech team
+- **Mois 3-4** : Operations team
+- **Mois 5-6** : Growth team
+- **Mois 7+** : Scale teams
+
+---
+
+## 13. CONCLUSION ET PROCHAINES ÉTAPES
+
+### Actions immédiates
+1. **Validation technique** du stack proposé
+2. **Étude de marché** approfondie Israël/France
+3. **Prototype** page de calcul (2 semaines)
+4. **Recherche investisseurs** (target: 500k€)
+5. **Recrutement** Lead Developer
+
+### Vision à 3 ans
+- **Année 1** : Domination marché israélien
+- **Année 2** : Expansion Europe (FR, ES, DE)
+- **Année 3** : API B2B + marque blanche
+
+### Facteurs clés de succès
+1. **Rapidité d'exécution** - First mover
+2. **Excellence technique** - Zero downtime
+3. **UX exceptionnelle** - Conversion maximale
+4. **Support multilingue** natif
+5. **Compliance** irréprochable
+
+---
+
+## ANNEXES
+
+### A. Exemples de calcul
+
+**Cas 1 : Vol Paris-Tel Aviv retardé 4h**
+- Distance : 3 300 km
+- Réglementation UE : 400€
+- Réglementation IL : 2 390 NIS (~620€)
+- → Appliquer le plus avantageux (IL)
+
+**Cas 2 : Vol Madrid-New York annulé**
+- Distance : 5 800 km
+- Indemnisation : 600€
+- + Hébergement et repas
+
+**Cas 3 : Vol Tel Aviv-Bangkok retardé 9h**
+- Distance : 6 900 km
+- Réglementation IL : 3 580 NIS (~930€)
+- Pas d'application UE (départ hors UE, compagnie non-UE)
+
+### B. Architecture technique détaillée
+[Voir document séparé avec diagrammes]
+
+### C. Maquettes UI/UX
+[Voir Figma partagé]
+
+### D. Analyse concurrentielle
+[Voir étude de marché complète]
+
+### E. Business plan détaillé
+[Voir projection financière 5 ans]
