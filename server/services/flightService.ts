@@ -38,12 +38,18 @@ export class FlightService {
         return this.formatFlightData(existingFlight);
       }
 
-      // If not found, use mock data for demonstration
-      // In production, this would call external flight APIs
+      // Call FlightAPI.io to get real flight data
+      const realFlightData = await this.fetchFromFlightAPI(flightNumber, date);
+      if (realFlightData) {
+        // Store the flight data in our database
+        await this.storeFlight(realFlightData);
+        return realFlightData;
+      }
+
+      // Fallback to mock data if API fails - don't store mock data in DB
+      console.warn('FlightAPI.io call failed, using mock data as fallback');
       const mockFlightData = this.generateMockFlightData(flightNumber, date);
-      
-      // Store the flight data in our database
-      await this.storeFlight(mockFlightData);
+      // Don't store mock data to avoid polluting real data
       
       return mockFlightData;
     } catch (error) {
@@ -59,8 +65,8 @@ export class FlightService {
       if (!depAirport) {
         await storage.createAirport({
           id: flightData.departureAirport.iataCode,
-          iataCode: flightData.departureAirport.iataCode,
           name: flightData.departureAirport.name,
+          iataCode: flightData.departureAirport.iataCode,
           city: flightData.departureAirport.city,
           country: flightData.departureAirport.country,
         });
@@ -70,8 +76,8 @@ export class FlightService {
       if (!arrAirport) {
         await storage.createAirport({
           id: flightData.arrivalAirport.iataCode,
-          iataCode: flightData.arrivalAirport.iataCode,
           name: flightData.arrivalAirport.name,
+          iataCode: flightData.arrivalAirport.iataCode,
           city: flightData.arrivalAirport.city,
           country: flightData.arrivalAirport.country,
         });
@@ -82,8 +88,8 @@ export class FlightService {
       if (!airline) {
         await storage.createAirline({
           id: flightData.airline.iataCode,
-          iataCode: flightData.airline.iataCode,
           name: flightData.airline.name,
+          iataCode: flightData.airline.iataCode,
         });
       }
 
@@ -122,26 +128,26 @@ export class FlightService {
       flightNumber: flight.flightNumber,
       date: flight.flightDate,
       departureAirport: {
-        iataCode: flight.departureAirport.iataCode,
+        iataCode: flight.departureAirport.iataCode || '',
         name: flight.departureAirport.name,
         city: flight.departureAirport.city || '',
         country: flight.departureAirport.country || '',
       },
       arrivalAirport: {
-        iataCode: flight.arrivalAirport.iataCode,
+        iataCode: flight.arrivalAirport.iataCode || '',
         name: flight.arrivalAirport.name,
         city: flight.arrivalAirport.city || '',
         country: flight.arrivalAirport.country || '',
       },
-      scheduledDeparture: flight.scheduledDeparture!,
+      scheduledDeparture: flight.scheduledDeparture || new Date(),
       actualDeparture: flight.actualDeparture,
-      scheduledArrival: flight.scheduledArrival!,
+      scheduledArrival: flight.scheduledArrival || new Date(),
       actualArrival: flight.actualArrival,
-      status: flight.status,
+      status: flight.status || 'ON_TIME',
       delayMinutes,
       distance: flight.distance || 0,
       airline: {
-        iataCode: flight.airline.iataCode,
+        iataCode: flight.airline.iataCode || '',
         name: flight.airline.name,
       },
     };
@@ -210,6 +216,134 @@ export class FlightService {
     };
   }
 
+  private async fetchFromFlightAPI(flightNumber: string, date: Date): Promise<FlightData | null> {
+    try {
+      if (!process.env.FLIGHTAPI_IO_KEY) {
+        console.error('FLIGHTAPI_IO_KEY environment variable not set');
+        return null;
+      }
+
+      // Extract airline code from flight number (usually first 2 characters)
+      const airlineCode = flightNumber.substring(0, 2);
+      const flightNum = flightNumber.substring(2);
+      
+      // Format date as YYYYMMDD
+      const formattedDate = date.toISOString().slice(0, 10).replace(/-/g, '');
+      
+      const url = `https://api.flightapi.io/airline/${process.env.FLIGHTAPI_IO_KEY}?num=${flightNum}&name=${airlineCode}&date=${formattedDate}`;
+      
+      console.log(`Fetching flight data from FlightAPI.io: ${flightNumber} on ${formattedDate}`);
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        console.error(`FlightAPI.io API error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+      
+      const data = await response.json();
+      
+      if (!data || data.error) {
+        console.error('FlightAPI.io returned error:', data?.error || 'Unknown error');
+        return null;
+      }
+      
+      return this.parseFlightAPIResponse(data, flightNumber, date);
+    } catch (error) {
+      console.error('Error calling FlightAPI.io:', error);
+      return null;
+    }
+  }
+
+  private parseFlightAPIResponse(apiData: any, flightNumber: string, date: Date): FlightData | null {
+    try {
+      // FlightAPI.io response structure may vary, this is a general mapping
+      const flight = apiData;
+      
+      if (!flight.departure || !flight.arrival) {
+        console.error('Invalid flight data structure from FlightAPI.io');
+        return null;
+      }
+      
+      // Parse scheduled and actual times
+      const scheduledDeparture = new Date(flight.departure.scheduled);
+      const actualDeparture = flight.departure.actual ? new Date(flight.departure.actual) : null;
+      const scheduledArrival = new Date(flight.arrival.scheduled);
+      const actualArrival = flight.arrival.actual ? new Date(flight.arrival.actual) : null;
+      
+      // Calculate delay
+      const delayMinutes = this.calculateDelayMinutes(scheduledArrival, actualArrival);
+      
+      // Determine status
+      let status: FlightStatus = 'ON_TIME';
+      if (flight.status) {
+        if (flight.status.toLowerCase().includes('delay')) status = 'DELAYED';
+        else if (flight.status.toLowerCase().includes('cancel')) status = 'CANCELLED';
+        else if (flight.status.toLowerCase().includes('board')) status = 'BOARDING';
+        else if (flight.status.toLowerCase().includes('departed')) status = 'DEPARTED';
+        else if (flight.status.toLowerCase().includes('arrived')) status = 'ARRIVED';
+      } else if (delayMinutes > 15) {
+        status = 'DELAYED';
+      }
+      
+      // Calculate approximate distance (simplified - could be enhanced)
+      const distance = this.calculateDistance(
+        flight.departure.airport?.coordinates?.lat || 0,
+        flight.departure.airport?.coordinates?.lng || 0,
+        flight.arrival.airport?.coordinates?.lat || 0,
+        flight.arrival.airport?.coordinates?.lng || 0
+      );
+      
+      return {
+        flightNumber,
+        date,
+        departureAirport: {
+          iataCode: flight.departure.iata || flight.departure.airport?.iata || '',
+          name: flight.departure.airport?.name || 'Unknown Airport',
+          city: flight.departure.airport?.city || '',
+          country: flight.departure.airport?.country || '',
+        },
+        arrivalAirport: {
+          iataCode: flight.arrival.iata || flight.arrival.airport?.iata || '',
+          name: flight.arrival.airport?.name || 'Unknown Airport',
+          city: flight.arrival.airport?.city || '',
+          country: flight.arrival.airport?.country || '',
+        },
+        scheduledDeparture,
+        actualDeparture,
+        scheduledArrival,
+        actualArrival,
+        status,
+        delayMinutes,
+        distance: Math.round(distance),
+        airline: {
+          iataCode: flight.airline?.iata || flightNumber.substring(0, 2),
+          name: flight.airline?.name || 'Unknown Airline',
+        },
+      };
+    } catch (error) {
+      console.error('Error parsing FlightAPI.io response:', error);
+      return null;
+    }
+  }
+
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    // Haversine formula to calculate distance between two points
+    const R = 6371; // Earth's radius in kilometers
+    const dLat = this.deg2rad(lat2 - lat1);
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  private deg2rad(deg: number): number {
+    return deg * (Math.PI/180);
+  }
+
   private calculateDelayMinutes(scheduled: Date | null, actual: Date | null): number {
     if (!scheduled || !actual) return 0;
     return Math.max(0, Math.floor((actual.getTime() - scheduled.getTime()) / (1000 * 60)));
@@ -218,7 +352,7 @@ export class FlightService {
   async searchAirports(query: string): Promise<Array<{ iataCode: string; name: string; city: string; country: string }>> {
     const airports = await storage.searchAirports(query);
     return airports.map(airport => ({
-      iataCode: airport.iataCode,
+      iataCode: airport.iataCode || '',
       name: airport.name,
       city: airport.city || '',
       country: airport.country || '',

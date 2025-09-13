@@ -101,7 +101,7 @@ export class DatabaseStorage implements IStorage {
     // Add initial timeline entry
     await this.addClaimTimelineEntry({
       claimId: claim.id,
-      status: claim.status,
+      status: claim.status || 'DRAFT',
       description: 'Claim created',
     });
     
@@ -213,7 +213,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(documents)
       .where(eq(documents.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // Flight operations
@@ -269,13 +269,11 @@ export class DatabaseStorage implements IStorage {
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
       
-      whereClause = and(
-        whereClause,
-        and(
-          sql`${flights.flightDate} >= ${startOfDay}`,
-          sql`${flights.flightDate} <= ${endOfDay}`
-        )
-      );
+      const dateClause = and(
+        sql`${flights.flightDate} >= ${startOfDay}`,
+        sql`${flights.flightDate} <= ${endOfDay}`
+      )!;
+      whereClause = and(whereClause, dateClause)!;
     }
 
     const results = await db

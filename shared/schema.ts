@@ -69,7 +69,10 @@ export const flightStatusEnum = pgEnum('flight_status', [
   'ON_TIME',
   'DELAYED',
   'CANCELLED',
-  'DIVERTED'
+  'DIVERTED',
+  'BOARDING',
+  'DEPARTED',
+  'ARRIVED'
 ]);
 
 // Airlines table
@@ -269,12 +272,10 @@ export const insertFlightSchema = createInsertSchema(flights).omit({
 });
 
 export const insertAirlineSchema = createInsertSchema(airlines).omit({
-  id: true,
   createdAt: true,
 });
 
 export const insertAirportSchema = createInsertSchema(airports).omit({
-  id: true,
   createdAt: true,
 });
 
