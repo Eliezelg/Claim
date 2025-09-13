@@ -1,12 +1,11 @@
-import { MailService } from '@sendgrid/mail';
+import { Resend } from 'resend';
 import { Claim, User, ClaimStatus } from '@shared/schema';
 
-if (!process.env.SENDGRID_API_KEY) {
-  throw new Error("SENDGRID_API_KEY environment variable must be set");
+if (!process.env.RESEND_API_KEY) {
+  throw new Error("RESEND_API_KEY environment variable must be set");
 }
 
-const mailService = new MailService();
-mailService.setApiKey(process.env.SENDGRID_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export interface EmailTemplate {
   subject: string;
@@ -15,7 +14,7 @@ export interface EmailTemplate {
 }
 
 export class EmailService {
-  private readonly fromEmail = process.env.FROM_EMAIL || 'noreply@flightclaim.com';
+  private readonly fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
 
   async sendClaimSubmittedEmail(user: User, claim: Claim): Promise<boolean> {
     const template = this.getClaimSubmittedTemplate(user, claim);
@@ -34,7 +33,7 @@ export class EmailService {
 
   private async sendEmail(to: string, template: EmailTemplate): Promise<boolean> {
     try {
-      await mailService.send({
+      await resend.emails.send({
         to,
         from: this.fromEmail,
         subject: template.subject,
@@ -43,7 +42,7 @@ export class EmailService {
       });
       return true;
     } catch (error) {
-      console.error('SendGrid email error:', error);
+      console.error('Resend email error:', error);
       return false;
     }
   }
@@ -118,12 +117,15 @@ FlightClaim Team
 
   private getStatusUpdateTemplate(user: User, claim: Claim, status: ClaimStatus): EmailTemplate {
     const statusMessages = {
+      DRAFT: 'Draft',
+      SUBMITTED: 'Submitted',
       UNDER_REVIEW: 'Under Review',
       DOCUMENTING: 'Awaiting Additional Documents',
       NEGOTIATING: 'Negotiating with Airline',
       APPROVED: 'Approved',
       REJECTED: 'Unfortunately Rejected',
       PAID: 'Payment Processed',
+      CANCELLED: 'Cancelled',
     };
 
     const subject = `Claim Update - ${statusMessages[status] || status}`;
@@ -255,12 +257,15 @@ FlightClaim Team
 
   private getStatusDescription(status: ClaimStatus): string {
     const descriptions = {
+      DRAFT: 'Your claim is still in draft status.',
+      SUBMITTED: 'Your claim has been submitted for review.',
       UNDER_REVIEW: 'Our team is reviewing your claim and documentation.',
       DOCUMENTING: 'We may need additional documents from you. Please check your dashboard for details.',
       NEGOTIATING: 'We are actively negotiating with the airline regarding your compensation. Airlines typically respond within 7-14 business days.',
       APPROVED: 'Your claim has been approved! Payment processing will begin shortly.',
       REJECTED: 'Unfortunately, your claim was not successful. You can contact our support team for more details.',
       PAID: 'Your compensation has been processed and should arrive in your account within 3-5 business days.',
+      CANCELLED: 'Your claim has been cancelled.',
     };
     
     return descriptions[status] || 'Your claim status has been updated.';
