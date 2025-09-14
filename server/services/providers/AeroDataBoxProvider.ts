@@ -74,8 +74,8 @@ export class AeroDataBoxProvider implements IFlightProvider {
       // Find the flight that matches our date most closely
       const targetDate = date.toISOString().split('T')[0];
       const flight = data.find(f => 
-        f.departure?.scheduledTimeLocal?.startsWith(targetDate) ||
-        f.departure?.scheduledTimeUtc?.startsWith(targetDate)
+        f.departure?.scheduledTime?.local?.startsWith(targetDate) ||
+        f.departure?.scheduledTime?.utc?.startsWith(targetDate)
       ) || data[0];
       
       if (!flight.departure || !flight.arrival) {
@@ -88,19 +88,19 @@ export class AeroDataBoxProvider implements IFlightProvider {
       
       // Parse times with timezone handling
       const scheduledDeparture = this.parseAeroDataBoxTime(
-        flight.departure.scheduledTimeLocal || flight.departure.scheduledTimeUtc,
+        flight.departure.scheduledTime?.local || flight.departure.scheduledTime?.utc,
         flight.departure.airport?.timeZone
       );
       const scheduledArrival = this.parseAeroDataBoxTime(
-        flight.arrival.scheduledTimeLocal || flight.arrival.scheduledTimeUtc,
+        flight.arrival.scheduledTime?.local || flight.arrival.scheduledTime?.utc,
         flight.arrival.airport?.timeZone
       );
       const actualDeparture = this.parseAeroDataBoxTime(
-        flight.departure.actualTimeLocal || flight.departure.actualTimeUtc,
+        flight.departure.actualTime?.local || flight.departure.actualTime?.utc,
         flight.departure.airport?.timeZone
       );
       const actualArrival = this.parseAeroDataBoxTime(
-        flight.arrival.actualTimeLocal || flight.arrival.actualTimeUtc,
+        flight.arrival.actualTime?.local || flight.arrival.actualTime?.utc,
         flight.arrival.airport?.timeZone
       );
       
