@@ -23,9 +23,10 @@ import {
   type InsertClaimTimeline,
   type ClaimTimeline,
   type ClaimStatus,
+  type UserRole,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, sql, like, or } from "drizzle-orm";
+import { eq, desc, and, sql, like, or, gte, lte, count, sum } from "drizzle-orm";
 
 export interface IStorage {
   // User operations (required for Replit Auth)
@@ -61,6 +62,37 @@ export interface IStorage {
   // Timeline operations
   addClaimTimelineEntry(entry: InsertClaimTimeline): Promise<ClaimTimeline>;
   getClaimTimeline(claimId: string): Promise<ClaimTimeline[]>;
+
+  // Admin operations
+  listAllClaims(filters?: {
+    status?: ClaimStatus;
+    jurisdiction?: string;
+    fromDate?: Date;
+    toDate?: Date;
+    searchQuery?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ claims: ClaimWithRelations[]; total: number }>;
+  
+  getGlobalStats(): Promise<{
+    totalClaims: number;
+    claimsByStatus: Record<ClaimStatus, number>;
+    claimsByJurisdiction: Record<string, number>;
+    totalCompensation: number;
+    avgProcessingTime: number;
+    recentActivity: ClaimTimeline[];
+  }>;
+  
+  listAllUsers(options?: {
+    searchQuery?: string;
+    role?: UserRole;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ users: User[]; total: number }>;
+  
+  updateUserRole(userId: string, role: UserRole): Promise<User | undefined>;
+  
+  updateClaimStatusWithActor(id: string, status: ClaimStatus, actorUserId: string, description?: string): Promise<Claim | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -354,6 +386,255 @@ export class DatabaseStorage implements IStorage {
       .from(claimTimeline)
       .where(eq(claimTimeline.claimId, claimId))
       .orderBy(desc(claimTimeline.createdAt));
+  }
+
+  // Admin operations
+  async listAllClaims(filters?: {
+    status?: ClaimStatus;
+    jurisdiction?: string;
+    fromDate?: Date;
+    toDate?: Date;
+    searchQuery?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ claims: ClaimWithRelations[]; total: number }> {
+    let whereConditions: any[] = [];
+    
+    if (filters?.status) {
+      whereConditions.push(eq(claims.status, filters.status));
+    }
+    
+    if (filters?.jurisdiction) {
+      whereConditions.push(eq(claims.jurisdiction, filters.jurisdiction as any));
+    }
+    
+    if (filters?.fromDate) {
+      whereConditions.push(gte(claims.createdAt, filters.fromDate));
+    }
+    
+    if (filters?.toDate) {
+      whereConditions.push(lte(claims.createdAt, filters.toDate));
+    }
+    
+    if (filters?.searchQuery) {
+      const query = `%${filters.searchQuery}%`;
+      whereConditions.push(
+        or(
+          like(claims.claimNumber, query),
+          like(claims.flightNumber, query),
+          like(claims.passengerFirstName, query),
+          like(claims.passengerLastName, query),
+          like(claims.passengerEmail, query)
+        )
+      );
+    }
+
+    const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    // Get total count
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(claims)
+      .where(whereClause);
+
+    // Get claims with relations
+    const results = await db
+      .select()
+      .from(claims)
+      .leftJoin(users, eq(claims.userId, users.id))
+      .leftJoin(flights, eq(claims.flightId, flights.id))
+      .where(whereClause)
+      .orderBy(desc(claims.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    const claimsWithRelations = await Promise.all(
+      results.map(async (result) => {
+        const [documents, timeline] = await Promise.all([
+          this.getDocumentsByClaimId(result.claims.id),
+          this.getClaimTimeline(result.claims.id),
+        ]);
+
+        return {
+          ...result.claims,
+          user: result.users || undefined,
+          flight: result.flights || undefined,
+          documents,
+          timeline,
+        };
+      })
+    );
+
+    return {
+      claims: claimsWithRelations,
+      total: totalResult.count,
+    };
+  }
+
+  async getGlobalStats(): Promise<{
+    totalClaims: number;
+    claimsByStatus: Record<ClaimStatus, number>;
+    claimsByJurisdiction: Record<string, number>;
+    totalCompensation: number;
+    avgProcessingTime: number;
+    recentActivity: ClaimTimeline[];
+  }> {
+    // Total claims
+    const [totalClaimsResult] = await db
+      .select({ count: count() })
+      .from(claims);
+
+    // Claims by status
+    const statusResults = await db
+      .select({ status: claims.status, count: count() })
+      .from(claims)
+      .groupBy(claims.status);
+
+    const claimsByStatus = statusResults.reduce((acc, result) => {
+      if (result.status) {
+        acc[result.status] = result.count;
+      }
+      return acc;
+    }, {} as Record<ClaimStatus, number>);
+
+    // Claims by jurisdiction
+    const jurisdictionResults = await db
+      .select({ jurisdiction: claims.jurisdiction, count: count() })
+      .from(claims)
+      .groupBy(claims.jurisdiction);
+
+    const claimsByJurisdiction = jurisdictionResults.reduce((acc, result) => {
+      if (result.jurisdiction) {
+        acc[result.jurisdiction] = result.count;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Total compensation (paid claims)
+    const [compensationResult] = await db
+      .select({ total: sum(claims.finalCompensationAmount) })
+      .from(claims)
+      .where(eq(claims.status, 'PAID'));
+
+    // Average processing time (submitted to paid)
+    const processingTimes = await db
+      .select({
+        submitted: claims.submittedAt,
+        completed: claims.completedAt
+      })
+      .from(claims)
+      .where(and(eq(claims.status, 'PAID'), sql`${claims.submittedAt} IS NOT NULL`, sql`${claims.completedAt} IS NOT NULL`));
+
+    let avgProcessingTime = 0;
+    if (processingTimes.length > 0) {
+      const totalTime = processingTimes.reduce((acc, claim) => {
+        if (claim.submitted && claim.completed) {
+          return acc + (claim.completed.getTime() - claim.submitted.getTime());
+        }
+        return acc;
+      }, 0);
+      avgProcessingTime = totalTime / processingTimes.length / (1000 * 60 * 60 * 24); // Convert to days
+    }
+
+    // Recent activity (last 10 timeline entries)
+    const recentActivity = await db
+      .select()
+      .from(claimTimeline)
+      .orderBy(desc(claimTimeline.createdAt))
+      .limit(10);
+
+    return {
+      totalClaims: totalClaimsResult.count,
+      claimsByStatus,
+      claimsByJurisdiction,
+      totalCompensation: parseFloat(compensationResult.total?.toString() || '0'),
+      avgProcessingTime,
+      recentActivity,
+    };
+  }
+
+  async listAllUsers(options?: {
+    searchQuery?: string;
+    role?: UserRole;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ users: User[]; total: number }> {
+    let whereConditions: any[] = [];
+
+    if (options?.role) {
+      whereConditions.push(eq(users.role, options.role));
+    }
+
+    if (options?.searchQuery) {
+      const query = `%${options.searchQuery}%`;
+      whereConditions.push(
+        or(
+          like(users.firstName, query),
+          like(users.lastName, query),
+          like(users.email, query)
+        )
+      );
+    }
+
+    const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    // Get total count
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(users)
+      .where(whereClause);
+
+    // Get users
+    const userResults = await db
+      .select()
+      .from(users)
+      .where(whereClause)
+      .orderBy(desc(users.createdAt))
+      .limit(options?.limit || 50)
+      .offset(options?.offset || 0);
+
+    return {
+      users: userResults,
+      total: totalResult.count,
+    };
+  }
+
+  async updateUserRole(userId: string, role: UserRole): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ role, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async updateClaimStatusWithActor(
+    id: string,
+    status: ClaimStatus,
+    actorUserId: string,
+    description?: string
+  ): Promise<Claim | undefined> {
+    const [claim] = await db
+      .update(claims)
+      .set({ 
+        status, 
+        updatedAt: new Date(),
+        ...(status === 'SUBMITTED' && { submittedAt: new Date() }),
+        ...(status === 'PAID' && { completedAt: new Date() }),
+      })
+      .where(eq(claims.id, id))
+      .returning();
+    
+    if (claim) {
+      await this.addClaimTimelineEntry({
+        claimId: id,
+        status,
+        description: description || `Status updated to ${status} by admin`,
+        actorUserId,
+      });
+    }
+    
+    return claim;
   }
 }
 
