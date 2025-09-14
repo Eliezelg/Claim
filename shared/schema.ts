@@ -15,30 +15,13 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Session storage table (required for Replit Auth)
-export const sessions = pgTable(
-  "sessions",
-  {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
-  },
-  (table) => [index("IDX_session_expire").on(table.expire)],
-);
+// Enums (defined first)
+export const userRoleEnum = pgEnum('user_role', [
+  'USER',
+  'ADMIN',
+  'SUPERADMIN'
+]);
 
-// User storage table (required for Replit Auth)
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
-  preferredLanguage: varchar("preferred_language").default('en'),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Enums
 export const claimStatusEnum = pgEnum('claim_status', [
   'DRAFT',
   'SUBMITTED',
@@ -82,6 +65,30 @@ export const flightTypeEnum = pgEnum('flight_type', [
   'CHARTER',
   'UNKNOWN'
 ]);
+
+// Session storage table (required for Replit Auth)
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// User storage table (required for Replit Auth)
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  preferredLanguage: varchar("preferred_language").default('en'),
+  role: userRoleEnum("role").default('USER'),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
 
 // Airlines table
 export const airlines = pgTable("airlines", {
@@ -186,6 +193,9 @@ export const claims = pgTable("claims", {
   index("idx_user_claims").on(table.userId),
   index("idx_claim_status").on(table.status),
   index("idx_flight_date").on(table.flightDate),
+  index("idx_claim_created").on(table.createdAt),
+  index("idx_claim_submitted").on(table.submittedAt),
+  index("idx_claim_jurisdiction").on(table.jurisdiction),
 ]);
 
 // Documents table
@@ -210,6 +220,7 @@ export const claimTimeline = pgTable("claim_timeline", {
   status: claimStatusEnum("status").notNull(),
   description: text("description"),
   metadata: jsonb("metadata"),
+  actorUserId: varchar("actor_user_id").references(() => users.id), // Who made this change
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => [
   index("idx_claim_timeline").on(table.claimId, table.createdAt),
@@ -336,3 +347,4 @@ export type Jurisdiction = typeof jurisdictionEnum.enumValues[number];
 export type DocumentType = typeof documentTypeEnum.enumValues[number];
 export type FlightStatus = typeof flightStatusEnum.enumValues[number];
 export type FlightType = typeof flightTypeEnum.enumValues[number];
+export type UserRole = typeof userRoleEnum.enumValues[number];
