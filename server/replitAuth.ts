@@ -46,10 +46,13 @@ export function getSession() {
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
+    name: 'sessionId', // Don't use default session name
     cookie: {
       httpOnly: true,
       secure: true,
+      sameSite: 'lax', // Protect against CSRF while allowing same-site requests
       maxAge: sessionTtl,
+      path: '/', // Explicit path
     },
   });
 }
