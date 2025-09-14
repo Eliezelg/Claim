@@ -95,12 +95,15 @@ export class AeroDataBoxProvider implements IFlightProvider {
         flight.arrival.scheduledTime?.local || flight.arrival.scheduledTime?.utc,
         flight.arrival.airport?.timeZone
       );
+      // Use actualTime if available, otherwise fallback to predictedTime for delay calculation
       const actualDeparture = this.parseAeroDataBoxTime(
-        flight.departure.actualTime?.local || flight.departure.actualTime?.utc,
+        flight.departure.actualTime?.local || flight.departure.actualTime?.utc ||
+        flight.departure.predictedTime?.local || flight.departure.predictedTime?.utc,
         flight.departure.airport?.timeZone
       );
       const actualArrival = this.parseAeroDataBoxTime(
-        flight.arrival.actualTime?.local || flight.arrival.actualTime?.utc,
+        flight.arrival.actualTime?.local || flight.arrival.actualTime?.utc ||
+        flight.arrival.predictedTime?.local || flight.arrival.predictedTime?.utc,
         flight.arrival.airport?.timeZone
       );
       
