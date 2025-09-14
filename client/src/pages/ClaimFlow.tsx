@@ -28,7 +28,7 @@ export default function ClaimFlow() {
     if (flightResult) {
       setClaimData({
         flightNumber: flightResult.flight.flightNumber,
-        flightDate: flightResult.flight.date.toISOString().split('T')[0],
+        flightDate: new Date(flightResult.flight.date).toISOString().split('T')[0],
         departureAirport: flightResult.flight.departureAirport.iataCode,
         arrivalAirport: flightResult.flight.arrivalAirport.iataCode,
         jurisdiction: flightResult.compensation.recommended?.jurisdiction,

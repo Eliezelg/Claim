@@ -271,6 +271,9 @@ export class FlightAwareProvider implements IFlightProvider {
       'ZSSS': 'SHA', 'ZSPD': 'PVG', 'ZBAA': 'PEK', 'ZBAD': 'PKX', // China
       'VHHH': 'HKG', 'WSSS': 'SIN', 'WMKK': 'KUL', // Hong Kong, Singapore, Malaysia
       'YSSY': 'SYD', 'YMML': 'MEL', 'YBBN': 'BNE', // Australia
+      
+      // African airports
+      'FKKD': 'DLA', // Douala, Cameroon
     };
     
     const iataCode = icaoToIata[code];
