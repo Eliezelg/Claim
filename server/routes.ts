@@ -272,7 +272,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const user = await storage.upsertUser({
         id: userId,
-        preferredLanguage,
       });
 
       res.json(user);

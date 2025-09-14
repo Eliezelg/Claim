@@ -478,6 +478,7 @@ export class FlightService {
   
   resetCircuitBreakers(): void {
     this.providerChain?.clearCircuitBreakers();
+    console.log('FlightService: Circuit breakers reset');
   }
 }
 

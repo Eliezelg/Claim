@@ -117,7 +117,7 @@ export const flights = pgTable("flights", {
   actualDeparture: timestamp("actual_departure"),
   scheduledArrival: timestamp("scheduled_arrival"),
   actualArrival: timestamp("actual_arrival"),
-  status: flightStatusEnum("status").default('ON_TIME'),
+  status: flightStatusEnum("status").default('UNKNOWN'),
   flightType: flightTypeEnum("flight_type").default('PASSENGER'),
   distance: integer("distance"), // in kilometers
   flightDate: timestamp("flight_date").notNull(),

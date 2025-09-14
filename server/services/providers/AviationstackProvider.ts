@@ -18,30 +18,34 @@ export class AviationstackProvider implements IFlightProvider {
       // Aviationstack uses YYYY-MM-DD format
       const dateStr = date.toISOString().split('T')[0];
       
-      // Aviationstack API call
+      // Aviationstack API call - build URL manually for better control
       const url = `${this.baseUrl}/flights`;
-      const params = new URLSearchParams({
-        access_key: this.apiKey,
-        flight_iata: flightNumber,
-        flight_date: dateStr,
-        limit: '1'
-      });
+      const fullUrl = `${url}?access_key=${this.apiKey}&flight_iata=${flightNumber}&flight_date=${dateStr}&limit=1`;
       
-      console.log(`Aviationstack API request: ${url}?${params.toString().replace(this.apiKey, '[API_KEY_HIDDEN]')}`);
+      console.log(`Aviationstack API request: ${url}?access_key=[API_KEY_HIDDEN]&flight_iata=${flightNumber}&flight_date=${dateStr}&limit=1`);
       
-      const response = await fetch(`${url}?${params.toString()}`);
+      const response = await fetch(fullUrl);
       
       if (!response.ok) {
+        // Get response body for better error details
+        let errorDetails = '';
+        try {
+          const errorBody = await response.text();
+          errorDetails = errorBody ? ` - ${errorBody}` : '';
+        } catch (e) {
+          // Ignore error reading body
+        }
+        
         if (response.status === 401 || response.status === 403) {
-          throw new FlightProviderException(FlightProviderError.AUTH_ERROR, "Invalid Aviationstack API key");
+          throw new FlightProviderException(FlightProviderError.AUTH_ERROR, `Invalid Aviationstack API key${errorDetails}`);
         } else if (response.status === 429) {
           const retryAfter = parseInt(response.headers.get('Retry-After') || '3600');
-          throw new FlightProviderException(FlightProviderError.RATE_LIMITED, "Aviationstack rate limit exceeded", retryAfter);
+          throw new FlightProviderException(FlightProviderError.RATE_LIMITED, `Aviationstack rate limit exceeded${errorDetails}`, retryAfter);
         }
         
         throw new FlightProviderException(
           FlightProviderError.SERVICE_UNAVAILABLE,
-          `Aviationstack API error: ${response.status} ${response.statusText}`
+          `Aviationstack API error: ${response.status} ${response.statusText}${errorDetails}`
         );
       }
       
@@ -88,10 +92,10 @@ export class AviationstackProvider implements IFlightProvider {
       // Calculate delay in minutes
       const delayMinutes = actualArrival && scheduledArrival 
         ? Math.round((actualArrival.getTime() - scheduledArrival.getTime()) / (1000 * 60))
-        : 0;
+        : null;
       
-      // Map status
-      const status = this.mapAviationstackStatus(flight.flight_status);
+      // Map status - if no actual arrival time available, set to UNKNOWN
+      const status = !actualArrival ? 'UNKNOWN' : this.mapAviationstackStatus(flight.flight_status);
       
       // Detect flight type (limited info in Aviationstack)
       const flightType = FlightType.PASSENGER; // Aviationstack mainly covers passenger flights
@@ -153,7 +157,7 @@ export class AviationstackProvider implements IFlightProvider {
   }
   
   private mapAviationstackStatus(status: string): FlightStatus {
-    if (!status) return 'ON_TIME';
+    if (!status) return 'UNKNOWN';
     
     const statusLower = status.toLowerCase();
     
@@ -164,7 +168,7 @@ export class AviationstackProvider implements IFlightProvider {
     if (statusLower === 'landed') return 'ARRIVED';
     if (statusLower === 'scheduled') return 'ON_TIME';
     
-    return 'ON_TIME';
+    return 'UNKNOWN';
   }
   
   private getAirlineName(airlineCode: string): string {

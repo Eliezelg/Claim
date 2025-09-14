@@ -130,10 +130,10 @@ export class AeroDataBoxProvider implements IFlightProvider {
       // Calculate delay in minutes
       const delayMinutes = actualArrival && scheduledArrival 
         ? Math.round((actualArrival.getTime() - scheduledArrival.getTime()) / (1000 * 60))
-        : 0;
+        : null;
       
-      // Map status
-      const status = this.mapAeroDataBoxStatus(flight.status);
+      // Map status - if no actual arrival time available, set to UNKNOWN
+      const status = !actualArrival ? 'UNKNOWN' : this.mapAeroDataBoxStatus(flight.status);
       
       // Extract airline code from flight number
       const airlineCode = flightNumber.substring(0, 2);

@@ -18,17 +18,24 @@ export class FlightAwareProvider implements IFlightProvider {
       // FlightAware uses YYYY-MM-DD format for dates
       const dateStr = date.toISOString().split('T')[0];
       
+      // FlightAware requires end date to be AFTER start date, so add 1 day
+      const nextDay = new Date(date);
+      nextDay.setDate(nextDay.getDate() + 1);
+      const endDateStr = nextDay.toISOString().split('T')[0];
+      
       // Get flight info for specific date
       const url = `${this.baseUrl}/flights/${flightNumber}`;
       const params = new URLSearchParams({
         start: dateStr,
-        end: dateStr,
+        end: endDateStr,
         max_pages: '1'
       });
       
-      console.log(`FlightAware API request: ${url}?${params.toString()}`);
+      // Build URL manually to avoid encoding issues
+      const fullUrl = `${url}?start=${dateStr}&end=${endDateStr}&max_pages=1`;
+      console.log(`FlightAware API request: ${fullUrl}`);
       
-      const response = await fetch(`${url}?${params.toString()}`, {
+      const response = await fetch(fullUrl, {
         headers: {
           'x-apikey': this.apiKey,
           'Accept': 'application/json; charset=UTF-8'
@@ -36,19 +43,31 @@ export class FlightAwareProvider implements IFlightProvider {
       });
       
       if (!response.ok) {
+        // Get response body for better error details
+        let errorDetails = '';
+        try {
+          const errorBody = await response.text();
+          errorDetails = errorBody ? ` - ${errorBody}` : '';
+        } catch (e) {
+          // Ignore error reading body
+        }
+        
         if (response.status === 401) {
-          throw new FlightProviderException(FlightProviderError.AUTH_ERROR, "Invalid FlightAware API key");
+          throw new FlightProviderException(FlightProviderError.AUTH_ERROR, `Invalid FlightAware API key${errorDetails}`);
         } else if (response.status === 429) {
           const retryAfter = parseInt(response.headers.get('Retry-After') || '3600');
-          throw new FlightProviderException(FlightProviderError.RATE_LIMITED, "FlightAware rate limit exceeded", retryAfter);
+          throw new FlightProviderException(FlightProviderError.RATE_LIMITED, `FlightAware rate limit exceeded${errorDetails}`, retryAfter);
         } else if (response.status === 404) {
           console.log(`FlightAware: Flight ${flightNumber} not found for date ${dateStr}`);
           return null;
+        } else if (response.status === 400) {
+          console.error(`FlightAware: Bad Request for ${flightNumber} on ${dateStr}${errorDetails}`);
+          throw new FlightProviderException(FlightProviderError.INVALID_REQUEST, `FlightAware Bad Request: ${response.statusText}${errorDetails}`);
         }
         
         throw new FlightProviderException(
           FlightProviderError.SERVICE_UNAVAILABLE, 
-          `FlightAware API error: ${response.status} ${response.statusText}`
+          `FlightAware API error: ${response.status} ${response.statusText}${errorDetails}`
         );
       }
       
@@ -99,10 +118,10 @@ export class FlightAwareProvider implements IFlightProvider {
       // Calculate delay in minutes
       const delayMinutes = actualArrival && scheduledArrival 
         ? Math.round((actualArrival.getTime() - scheduledArrival.getTime()) / (1000 * 60))
-        : 0;
+        : null;
       
-      // Map status
-      const status = this.mapFlightAwareStatus(flight.status);
+      // Map status - if no actual arrival time available, set to UNKNOWN
+      const status = !actualArrival ? 'UNKNOWN' : this.mapFlightAwareStatus(flight.status);
       
       // Extract airline code from flight number
       const airlineCode = flightNumber.substring(0, 2);
@@ -115,14 +134,14 @@ export class FlightAwareProvider implements IFlightProvider {
           name: flight.operator || this.getAirlineName(airlineCode)
         },
         departureAirport: {
-          iataCode: flight.origin.code,
+          iataCode: this.convertIcaoToIata(flight.origin.code) || '',
           name: flight.origin.name || flight.origin.code,
           city: flight.origin.city || '',
           country: flight.origin.country_code || '',
           timezone: flight.origin.timezone
         },
         arrivalAirport: {
-          iataCode: flight.destination.code,
+          iataCode: this.convertIcaoToIata(flight.destination.code) || '',
           name: flight.destination.name || flight.destination.code,
           city: flight.destination.city || '',
           country: flight.destination.country_code || '',
@@ -202,7 +221,7 @@ export class FlightAwareProvider implements IFlightProvider {
   }
   
   private mapFlightAwareStatus(status: string): FlightStatus {
-    if (!status) return 'ON_TIME';
+    if (!status) return 'UNKNOWN';
     
     const statusLower = status.toLowerCase();
     
@@ -214,6 +233,55 @@ export class FlightAwareProvider implements IFlightProvider {
     if (statusLower.includes('boarding')) return 'BOARDING';
     
     return 'ON_TIME';
+  }
+  
+  private convertIcaoToIata(code: string): string | null {
+    if (!code) return null;
+    
+    // If code is already 3 characters, assume it's IATA
+    if (code.length === 3) return code;
+    
+    // ICAO to IATA mapping for major airports
+    const icaoToIata: { [key: string]: string } = {
+      // Major international airports
+      'KJFK': 'JFK', 'KLGA': 'LGA', 'KEWR': 'EWR', // New York area
+      'KORD': 'ORD', 'KMDW': 'MDW', // Chicago
+      'KLAX': 'LAX', 'KBUR': 'BUR', 'KSNA': 'SNA', // Los Angeles area
+      'KSFO': 'SFO', 'KSJC': 'SJC', 'KOAK': 'OAK', // San Francisco area
+      'KDEN': 'DEN', 'KLAS': 'LAS', 'KPHX': 'PHX', // Western US
+      'KMIA': 'MIA', 'KFLL': 'FLL', 'KPBI': 'PBI', // Florida
+      'KATL': 'ATL', 'KDFW': 'DFW', 'KIAH': 'IAH', // South
+      'KBOS': 'BOS', 'KDCA': 'DCA', 'KIAD': 'IAD', 'KBWI': 'BWI', // Northeast
+      
+      // European airports
+      'EGLL': 'LHR', 'EGKK': 'LGW', 'EGGW': 'LTN', 'EGSS': 'STN', // London
+      'EDDM': 'MUC', 'EDDF': 'FRA', 'EDDT': 'TXL', 'EDDB': 'BER', // Germany
+      'LFPG': 'CDG', 'LFPO': 'ORY', 'LFPB': 'LBG', // Paris
+      'EHAM': 'AMS', 'LEMD': 'MAD', 'LIRF': 'FCO', 'LIRN': 'NAP', // Netherlands, Spain, Italy
+      'LOWW': 'VIE', 'LSZH': 'ZUR', 'ESSA': 'ARN', 'EKCH': 'CPH', // Austria, Switzerland, Sweden, Denmark
+      
+      // Middle East & Israel
+      'LLBG': 'TLV', 'LLET': 'ETH', 'LLER': 'RPN', // Israel
+      'OMDB': 'DXB', 'OMAA': 'AUH', 'OTKM': 'DWC', // UAE
+      'OTHH': 'DOH', 'OERK': 'RUH', 'OEJN': 'JED', // Qatar, Saudi Arabia
+      
+      // Asia Pacific
+      'RJTT': 'NRT', 'RJAA': 'HND', // Tokyo
+      'RKSI': 'ICN', 'RKSS': 'GMP', // Seoul
+      'ZSSS': 'SHA', 'ZSPD': 'PVG', 'ZBAA': 'PEK', 'ZBAD': 'PKX', // China
+      'VHHH': 'HKG', 'WSSS': 'SIN', 'WMKK': 'KUL', // Hong Kong, Singapore, Malaysia
+      'YSSY': 'SYD', 'YMML': 'MEL', 'YBBN': 'BNE', // Australia
+    };
+    
+    const iataCode = icaoToIata[code];
+    if (iataCode) {
+      console.log(`FlightAware: Converted ICAO ${code} to IATA ${iataCode}`);
+      return iataCode;
+    }
+    
+    // If no mapping found, log warning and return null
+    console.warn(`FlightAware: No IATA mapping found for ICAO code: ${code}`);
+    return null;
   }
   
   private getAirlineName(airlineCode: string): string {
@@ -234,9 +302,10 @@ export class FlightAwareProvider implements IFlightProvider {
   
   canHandle(flightNumber: string, date: Date): boolean {
     // FlightAware has excellent global coverage, so can handle most flights
-    // Limit to flights within the last 90 days for best accuracy
+    // Allow both historical and future flights within reasonable bounds
     const daysSinceDate = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
-    return daysSinceDate <= 90;
+    const daysFromNow = Math.abs(daysSinceDate);
+    return daysFromNow <= 90; // Support both past and future flights within 90 days
   }
   
   async getStatus(): Promise<{
