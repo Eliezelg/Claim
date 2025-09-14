@@ -32,6 +32,8 @@ export default function ClaimFlow() {
     
     // Check if user is authenticated before starting claim
     if (!isAuthenticated) {
+      // Save current URL for redirect after login
+      sessionStorage.setItem('returnTo', window.location.pathname + window.location.search);
       // Redirect to login
       window.location.href = '/api/login';
       return;
