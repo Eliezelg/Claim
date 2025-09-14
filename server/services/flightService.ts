@@ -339,16 +339,27 @@ export class FlightService {
       const statusObj = selectedEntry.status ? selectedEntry : apiData.find(item => item.status);
       
       // Parse scheduled and actual times from the specific format
-      // CRITICAL FIX: Use scheduledTime for scheduled times, not actual times
-      const scheduledDeparture = this.parseFlightAPITime(departure.scheduledTime, date) || 
-                                 (departure.departureDateTime ? new Date(departure.departureDateTime) : new Date(date));
+      // CRITICAL FIX: Use scheduledTime for scheduled times, and handle timezones correctly
+      const scheduledDeparture = this.parseFlightAPITimeWithTimezone(departure.scheduledTime, date, departure.airportCountryCode);
+      const scheduledArrival = this.parseFlightAPITimeWithTimezone(arrival.scheduledTime, date, arrival.airportCountryCode);
+      
+      // Parse actual times with proper timezone handling
       const actualDeparture = departure.departureDateTime ? new Date(departure.departureDateTime) : null;
-      const scheduledArrival = this.parseFlightAPITime(arrival.scheduledTime, date) || 
-                              (arrival.arrivalDateTime ? new Date(arrival.arrivalDateTime) : new Date(date));
       const actualArrival = arrival.arrivalDateTime ? new Date(arrival.arrivalDateTime) : null;
       
-      // Calculate delay
+      // Validate parsed dates
+      if (!scheduledDeparture || !scheduledArrival) {
+        console.error('Failed to parse scheduled times from FlightAPI.io data');
+        return null;
+      }
+      
+      // Calculate delay - debug logging
+      console.log('Delay calculation debug:');
+      console.log('scheduledArrival:', scheduledArrival?.toISOString());
+      console.log('actualArrival:', actualArrival?.toISOString());
+      
       const delayMinutes = this.calculateDelayMinutes(scheduledArrival, actualArrival);
+      console.log('calculated delayMinutes:', delayMinutes);
       
       // Determine status with robust mapping
       let status: FlightStatus = 'ON_TIME';
@@ -561,8 +572,8 @@ export class FlightService {
         return null;
       }
       
-      // Use the year from the baseDate
-      const parsedDate = new Date(baseDate.getFullYear(), monthNum, parseInt(day), parseInt(hours), parseInt(minutes));
+      // Use the year from the baseDate and create a UTC date
+      const parsedDate = new Date(Date.UTC(baseDate.getFullYear(), monthNum, parseInt(day), parseInt(hours), parseInt(minutes)));
       
       // Validate the parsed date
       if (isNaN(parsedDate.getTime())) {
@@ -570,9 +581,67 @@ export class FlightService {
         return null;
       }
       
+      console.log(`Parsed scheduled time "${timeString}" -> ${parsedDate.toISOString()}`);
       return parsedDate;
     } catch (error) {
       console.error('Error parsing FlightAPI time:', timeString, error);
+      return null;
+    }
+  }
+
+  private parseFlightAPITimeWithTimezone(timeString: string | null, baseDate: Date, countryCode: string): Date | null {
+    if (!timeString) return null;
+    
+    try {
+      // FlightAPI.io returns times in format "18:00, Sep 09" or "21:50, Sep 09"
+      const match = timeString.match(/(\d{1,2}):(\d{2}),\s*(\w{3})\s*(\d{1,2})/);
+      if (!match) {
+        console.error('Unable to parse FlightAPI time format:', timeString);
+        return null;
+      }
+      
+      const [, hours, minutes, monthAbbr, day] = match;
+      
+      // Map month abbreviations to numbers
+      const monthMap: { [key: string]: number } = {
+        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+        'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+      };
+      
+      const monthNum = monthMap[monthAbbr];
+      if (monthNum === undefined) {
+        console.error('Unknown month abbreviation:', monthAbbr);
+        return null;
+      }
+      
+      // Get timezone offset for country (simplified mapping)
+      const timezoneOffsets: { [key: string]: number } = {
+        'IL': 3, // Israel Standard Time (UTC+3)
+        'FR': 2, // Central European Summer Time (UTC+2)
+        'DE': 2, // Central European Summer Time (UTC+2)
+        'GB': 1, // British Summer Time (UTC+1)
+        'ES': 2, // Central European Summer Time (UTC+2)
+        'US': -5, // Eastern Standard Time (simplified)
+        'IT': 2, // Central European Summer Time (UTC+2)
+        'NL': 2, // Central European Summer Time (UTC+2)
+      };
+      
+      const offset = timezoneOffsets[countryCode] || 0;
+      
+      // Create date in local time, then subtract offset to get UTC
+      const localDate = new Date(baseDate.getFullYear(), monthNum, parseInt(day), parseInt(hours), parseInt(minutes));
+      const utcDate = new Date(localDate.getTime() - (offset * 60 * 60 * 1000));
+      
+      // Validate the parsed date
+      if (isNaN(utcDate.getTime())) {
+        console.error('Invalid parsed date from:', timeString);
+        return null;
+      }
+      
+      console.log(`Parsed scheduled time "${timeString}" (${countryCode}, UTC${offset >= 0 ? '+' : ''}${offset}) -> ${utcDate.toISOString()}`);
+      return utcDate;
+    } catch (error) {
+      console.error('Error parsing FlightAPI time with timezone:', timeString, error);
       return null;
     }
   }

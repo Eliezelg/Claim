@@ -1,0 +1,104 @@
+Guide
+Your API requests are authenticated using API keys. Any request that doesn't include an API key will return an error.
+
+You can generate an API key from your Dashboard at any time.
+
+Here is the list of default parameters you have to use with this API:
+
+Parameters
+Description
+Type
+api_key
+
+required
+
+This is your personal API key. You can find this on your Dashboard.
+
+String
+
+num
+
+required
+
+This is the official flight number. You should know this in advance.
+
+String
+
+name
+
+required
+
+This is the airline code.
+
+String
+
+date
+
+required
+
+This is the date for which you wan to track this plane.
+
+Format - YYYYMMDD
+
+String
+
+depap
+
+
+This represents the target departure airport. It’s only required when two flights with the same name are departing from different locations.
+
+String
+
+Usage
+You have to send a GET request to  https://api.flightapi.io/airline along with all the parameters. 
+
+Take a look at how you might call this API using various different coding languages.
+
+curl
+Node
+Python
+Copy
+curl "https://api.flightapi.io/airline/6537facc0175698b26894ef8d67bc?num=33&name=DL&date=20231024"
+Response
+The sample response of the API will look somewhat like this.
+
+Copy
+// Sample Response
+
+[
+  {
+    "departure": {
+    "offGroundTime": "15:27, Jul 16",
+    "outGateTime": null,
+    "gate": null,
+    "departureDateTime": "2025-07-16T15:27:00+02:00",
+    "airport": "Barcelona",
+    "airportCity": "Barcelona",
+    "airportCode": "BCN",
+    "airportCountryCode": "ES",
+    "airportSlug": "BCN-Barcelona-Spain",
+    "scheduledTime": "14:55, Jul 16",
+    "estimatedTime": null,
+    "terminal": "1"
+    }
+  },
+  {
+    "arrival": {
+    "timeRemaining": "1 hr 12 min",
+    "onGroundTime": null,
+    "inGateTime": null,
+    "gate": null,
+    "baggage": null,
+    "arrivalDateTime": "2025-07-16T16:21:00+01:00",
+    "airport": "Heathrow",
+    "airportCity": "London",
+    "airportCode": "LHR",
+    "airportCountryCode": "GB",
+    "airportSlug": "LHR-London-UK-(Heathrow)",
+    "scheduledTime": "16:15, Jul 16",
+    "estimatedTime": "16:21, Jul 16",
+    "terminal": "5"
+    }
+  }
+]
+  
