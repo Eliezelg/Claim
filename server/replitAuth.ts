@@ -7,6 +7,16 @@ import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
+import type { User } from "@shared/schema";
+
+// Extend Express Request interface to include adminUser
+declare global {
+  namespace Express {
+    interface Request {
+      adminUser?: User;
+    }
+  }
+}
 
 if (!process.env.REPLIT_DOMAINS) {
   throw new Error("Environment variable REPLIT_DOMAINS not provided");
@@ -153,5 +163,65 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
   } catch (error) {
     res.status(401).json({ message: "Unauthorized" });
     return;
+  }
+};
+
+export const isAdmin: RequestHandler = async (req, res, next) => {
+  const user = req.user as any;
+
+  // First check if user is authenticated
+  if (!req.isAuthenticated() || !user.claims?.sub) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    // Get user from database to check role
+    const dbUser = await storage.getUser(user.claims.sub);
+    
+    if (!dbUser) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    // Check if user has admin or superadmin role
+    if (dbUser.role === 'ADMIN' || dbUser.role === 'SUPERADMIN') {
+      // Add user info to request for use in handlers
+      req.adminUser = dbUser;
+      return next();
+    }
+
+    return res.status(403).json({ message: "Admin access required" });
+  } catch (error) {
+    console.error('Admin check error:', error);
+    return res.status(500).json({ message: "Server error during authorization" });
+  }
+};
+
+export const isSuperAdmin: RequestHandler = async (req, res, next) => {
+  const user = req.user as any;
+
+  // First check if user is authenticated
+  if (!req.isAuthenticated() || !user.claims?.sub) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    // Get user from database to check role
+    const dbUser = await storage.getUser(user.claims.sub);
+    
+    if (!dbUser) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    // Check if user has superadmin role
+    if (dbUser.role === 'SUPERADMIN') {
+      // Add user info to request for use in handlers
+      req.adminUser = dbUser;
+      return next();
+    }
+
+    return res.status(403).json({ message: "Super admin access required" });
+  } catch (error) {
+    console.error('Super admin check error:', error);
+    return res.status(500).json({ message: "Server error during authorization" });
   }
 };
