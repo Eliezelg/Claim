@@ -69,9 +69,10 @@ export function DocumentUpload({ claimData, onComplete, onBack }: DocumentUpload
         await apiRequest('POST', `/api/claims/${claimId}/documents`, formData);
       } catch (error) {
         console.error('Document upload error:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         toast({
-          title: "Upload Warning",
-          description: `Failed to upload ${uploadedFile.file.name}. You can upload it later from your dashboard.`,
+          title: "Upload Warning", 
+          description: `Failed to upload ${uploadedFile.file.name}: ${errorMessage}`,
           variant: "destructive",
         });
       }
