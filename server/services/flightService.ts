@@ -1,5 +1,10 @@
 import { storage } from "../storage";
-import { FlightWithRelations, InsertFlight, FlightStatus } from "@shared/schema";
+import { FlightWithRelations, InsertFlight, FlightStatus, FlightType } from "@shared/schema";
+import { FlightProviderChain, FlightProviderChainResult } from "./providers/FlightProviderChain";
+import { FlightAwareProvider } from "./providers/FlightAwareProvider";
+import { AeroDataBoxProvider } from "./providers/AeroDataBoxProvider";
+import { AviationstackProvider } from "./providers/AviationstackProvider";
+import { NormalizedFlight, FlightType as ProviderFlightType } from "./providers/IFlightProvider";
 
 export interface FlightData {
   flightNumber: string;
@@ -21,37 +26,95 @@ export interface FlightData {
   scheduledArrival: Date;
   actualArrival: Date | null;
   status: FlightStatus;
+  flightType: FlightType;
   delayMinutes: number;
   distance: number;
   airline: {
     iataCode: string;
     name: string;
   };
+  // Provider metadata
+  dataProvider?: string;
+  providerMeta?: {
+    confidence: number;
+    lastUpdated: Date;
+  };
 }
 
 export class FlightService {
+  private providerChain!: FlightProviderChain; // Assigned in constructor
+  
+  constructor() {
+    this.initializeProviders();
+  }
+  
+  private initializeProviders(): void {
+    const providers = [];
+    
+    // Initialize FlightAware if API key is available
+    if (process.env.FLIGHTAWARE_API_KEY) {
+      providers.push(new FlightAwareProvider(process.env.FLIGHTAWARE_API_KEY));
+      console.log('FlightService: FlightAware provider initialized');
+    }
+    
+    // Initialize AeroDataBox if API key is available
+    if (process.env.AERODATABOX_API_KEY) {
+      providers.push(new AeroDataBoxProvider(process.env.AERODATABOX_API_KEY));
+      console.log('FlightService: AeroDataBox provider initialized');
+    }
+    
+    // Initialize Aviationstack if API key is available  
+    if (process.env.AVIATIONSTACK_API_KEY) {
+      providers.push(new AviationstackProvider(process.env.AVIATIONSTACK_API_KEY));
+      console.log('FlightService: Aviationstack provider initialized');
+    }
+    
+    // Keep FlightAPI.io as last fallback if no other providers
+    if (providers.length === 0 && process.env.FLIGHTAPI_IO_KEY) {
+      console.warn('FlightService: No modern providers available, keeping FlightAPI.io as fallback');
+      // We'll handle this in the getFlightData method
+    }
+    
+    this.providerChain = new FlightProviderChain(providers);
+    console.log(`FlightService: Initialized with ${providers.length} providers`);
+  }
+  
   async getFlightData(flightNumber: string, date: Date): Promise<FlightData | null> {
     try {
       // First check our database
       const existingFlight = await storage.getFlightByNumberAndDate(flightNumber, date);
       if (existingFlight) {
+        console.log(`FlightService: Found cached flight ${flightNumber} in database`);
         return this.formatFlightData(existingFlight);
       }
 
-      // Call FlightAPI.io to get real flight data
-      const realFlightData = await this.fetchFromFlightAPI(flightNumber, date);
-      if (realFlightData) {
-        // Store the flight data in our database
-        await this.storeFlight(realFlightData);
-        return realFlightData;
-      }
-
-      // Fallback to mock data if API fails - don't store mock data in DB
-      console.warn('FlightAPI.io call failed, using mock data as fallback');
-      const mockFlightData = this.generateMockFlightData(flightNumber, date);
-      // Don't store mock data to avoid polluting real data
+      // Use the provider chain to get real flight data
+      const result = await this.providerChain.getFlightData(flightNumber, date);
       
-      return mockFlightData;
+      if (result.flight) {
+        console.log(`FlightService: Successfully retrieved ${flightNumber} from ${result.successfulProvider} in ${result.totalResponseTimeMs}ms`);
+        
+        // Store the flight data in our database
+        await this.storeNormalizedFlight(result.flight);
+        return this.convertNormalizedToFlightData(result.flight);
+      }
+      
+      // Log attempt details
+      console.warn(`FlightService: All providers failed for ${flightNumber}:`, result.attempts);
+      
+      // Fallback to legacy FlightAPI.io if available and no modern providers succeeded
+      if (process.env.FLIGHTAPI_IO_KEY && this.providerChain.getProviderStatus().providers.length === 0) {
+        console.log('FlightService: Falling back to legacy FlightAPI.io');
+        const legacyData = await this.fetchFromFlightAPI(flightNumber, date);
+        if (legacyData) {
+          await this.storeFlight(legacyData);
+          return legacyData;
+        }
+      }
+      
+      // Return null - no mock data fallback in production
+      console.warn(`FlightService: No flight data found for ${flightNumber} on ${date.toISOString().split('T')[0]}`);
+      return null;
     } catch (error) {
       console.error('Error fetching flight data:', error);
       return null;
@@ -158,12 +221,18 @@ export class FlightService {
       scheduledArrival: flight.scheduledArrival || new Date(),
       actualArrival: flight.actualArrival,
       status: flight.status || 'ON_TIME',
+      flightType: flight.flightType || 'PASSENGER',
       delayMinutes,
       distance: flight.distance || 0,
       airline: {
         iataCode: flight.airline.iataCode || '',
         name: flight.airline.name,
       },
+      dataProvider: flight.dataProvider || undefined,
+      providerMeta: flight.dataConfidence ? {
+        confidence: parseFloat(flight.dataConfidence) || 0,
+        lastUpdated: flight.updatedAt || new Date()
+      } : undefined
     };
   }
 
@@ -224,10 +293,54 @@ export class FlightService {
       scheduledArrival,
       actualArrival: hasDelay ? actualArrival : null,
       status,
+      flightType: 'PASSENGER',
       delayMinutes,
       distance,
       airline,
     };
+  }
+  
+  private async storeNormalizedFlight(normalizedFlight: NormalizedFlight): Promise<void> {
+    try {
+      // Convert from NormalizedFlight to our internal FlightData format
+      const flightData = this.convertNormalizedToFlightData(normalizedFlight);
+      await this.storeFlight(flightData);
+    } catch (error) {
+      console.error('Error storing normalized flight data:', error);
+    }
+  }
+  
+  private convertNormalizedToFlightData(normalizedFlight: NormalizedFlight): FlightData {
+    return {
+      flightNumber: normalizedFlight.flightNumber,
+      date: normalizedFlight.date,
+      departureAirport: normalizedFlight.departureAirport,
+      arrivalAirport: normalizedFlight.arrivalAirport,
+      scheduledDeparture: normalizedFlight.scheduledDeparture,
+      actualDeparture: normalizedFlight.actualDeparture,
+      scheduledArrival: normalizedFlight.scheduledArrival,
+      actualArrival: normalizedFlight.actualArrival,
+      status: normalizedFlight.status,
+      flightType: this.mapProviderFlightType(normalizedFlight.flightType),
+      delayMinutes: normalizedFlight.delayMinutes,
+      distance: normalizedFlight.distance,
+      airline: normalizedFlight.airline,
+      dataProvider: normalizedFlight.providerMeta.provider,
+      providerMeta: {
+        confidence: normalizedFlight.providerMeta.confidence,
+        lastUpdated: normalizedFlight.providerMeta.lastUpdated
+      }
+    };
+  }
+  
+  private mapProviderFlightType(providerType: ProviderFlightType): FlightType {
+    switch (providerType) {
+      case ProviderFlightType.PASSENGER: return 'PASSENGER';
+      case ProviderFlightType.CARGO: return 'CARGO';
+      case ProviderFlightType.CHARTER: return 'CHARTER';
+      case ProviderFlightType.UNKNOWN: return 'UNKNOWN';
+      default: return 'PASSENGER';
+    }
   }
 
   private async fetchFromFlightAPI(flightNumber: string, date: Date): Promise<FlightData | null> {
@@ -424,6 +537,7 @@ export class FlightService {
         scheduledArrival,
         actualArrival,
         status,
+        flightType: 'PASSENGER', // FlightAPI.io mainly covers passenger flights
         delayMinutes,
         distance: Math.round(distance),
         airline: {
@@ -665,6 +779,19 @@ export class FlightService {
       city: airport.city || '',
       country: airport.country || '',
     }));
+  }
+  
+  // Provider status and management methods
+  getProviderStatus() {
+    return this.providerChain?.getProviderStatus() || { providers: [], circuitBreakers: {}, cacheSize: 0 };
+  }
+  
+  clearProviderCache(): void {
+    this.providerChain?.clearCache();
+  }
+  
+  resetCircuitBreakers(): void {
+    this.providerChain?.clearCircuitBreakers();
   }
 }
 

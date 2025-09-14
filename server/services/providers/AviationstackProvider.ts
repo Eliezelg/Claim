@@ -7,7 +7,7 @@ export class AviationstackProvider implements IFlightProvider {
   readonly priority = 3; // Third priority, tertiary fallback
   
   private apiKey: string;
-  private baseUrl = "http://api.aviationstack.com/v1";
+  private baseUrl = "https://api.aviationstack.com/v1";
   
   constructor(apiKey: string) {
     this.apiKey = apiKey;
