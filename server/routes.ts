@@ -6,9 +6,9 @@ import { flightService } from "./services/flightService";
 import { compensationCalculator } from "./services/compensationCalculator";
 import { emailService } from "./services/emailService";
 import { insertClaimSchema, insertDocumentSchema } from "@shared/schema";
+import { z } from "zod";
 import multer from 'multer';
 import path from 'path';
-import { z } from "zod";
 
 // Configure multer for file uploads
 const upload = multer({
@@ -110,10 +110,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Claims routes
+  const createClaimRequestSchema = insertClaimSchema.extend({
+    flightDate: z.coerce.date(),
+    euCompensationAmount: z.coerce.string().optional(),
+    israelCompensationAmount: z.coerce.string().optional(), 
+    finalCompensationAmount: z.coerce.string().optional(),
+  });
+
   app.post('/api/claims', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const claimData = insertClaimSchema.parse({
+      const claimData = createClaimRequestSchema.parse({
         ...req.body,
         userId,
       });
