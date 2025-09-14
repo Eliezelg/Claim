@@ -93,16 +93,30 @@ export class FlightService {
         });
       }
 
+      // Validate dates before storing
+      const validatedScheduledDeparture = this.validateDate(flightData.scheduledDeparture);
+      const validatedScheduledArrival = this.validateDate(flightData.scheduledArrival);
+      const validatedActualDeparture = flightData.actualDeparture ? this.validateDate(flightData.actualDeparture) : null;
+      const validatedActualArrival = flightData.actualArrival ? this.validateDate(flightData.actualArrival) : null;
+
+      if (!validatedScheduledDeparture || !validatedScheduledArrival) {
+        console.error('Invalid scheduled dates, cannot store flight:', {
+          scheduledDeparture: flightData.scheduledDeparture,
+          scheduledArrival: flightData.scheduledArrival
+        });
+        return;
+      }
+
       // Store flight
       const flightToStore: InsertFlight = {
         flightNumber: flightData.flightNumber,
         airlineId: flightData.airline.iataCode,
         departureAirportId: flightData.departureAirport.iataCode,
         arrivalAirportId: flightData.arrivalAirport.iataCode,
-        scheduledDeparture: flightData.scheduledDeparture,
-        actualDeparture: flightData.actualDeparture,
-        scheduledArrival: flightData.scheduledArrival,
-        actualArrival: flightData.actualArrival,
+        scheduledDeparture: validatedScheduledDeparture,
+        actualDeparture: validatedActualDeparture,
+        scheduledArrival: validatedScheduledArrival,
+        actualArrival: validatedActualArrival,
         status: flightData.status,
         distance: flightData.distance,
         flightDate: flightData.date,
@@ -326,9 +340,11 @@ export class FlightService {
       
       // Parse scheduled and actual times from the specific format
       // CRITICAL FIX: Use scheduledTime for scheduled times, not actual times
-      const scheduledDeparture = new Date(departure.scheduledTime || departure.departureDateTime);
+      const scheduledDeparture = this.parseFlightAPITime(departure.scheduledTime, date) || 
+                                 (departure.departureDateTime ? new Date(departure.departureDateTime) : new Date(date));
       const actualDeparture = departure.departureDateTime ? new Date(departure.departureDateTime) : null;
-      const scheduledArrival = new Date(arrival.scheduledTime || arrival.arrivalDateTime);
+      const scheduledArrival = this.parseFlightAPITime(arrival.scheduledTime, date) || 
+                              (arrival.arrivalDateTime ? new Date(arrival.arrivalDateTime) : new Date(date));
       const actualArrival = arrival.arrivalDateTime ? new Date(arrival.arrivalDateTime) : null;
       
       // Calculate delay
@@ -493,7 +509,7 @@ export class FlightService {
   }
 
   private getCountryFromCode(countryCode: string): string {
-    const countries = {
+    const countries: { [key: string]: string } = {
       'DE': 'Germany',
       'FR': 'France',
       'GB': 'United Kingdom', 
@@ -508,7 +524,7 @@ export class FlightService {
   }
 
   private getAirlineName(airlineCode: string): string {
-    const airlines = {
+    const airlines: { [key: string]: string } = {
       'LH': 'Lufthansa',
       'AF': 'Air France',
       'BA': 'British Airways',
@@ -518,6 +534,53 @@ export class FlightService {
       'LX': 'Swiss International Air Lines',
     };
     return airlines[airlineCode] || 'Unknown Airline';
+  }
+
+  private parseFlightAPITime(timeString: string | null, baseDate: Date): Date | null {
+    if (!timeString) return null;
+    
+    try {
+      // FlightAPI.io returns times in format "18:00, Sep 09" or "21:50, Sep 09"
+      const match = timeString.match(/(\d{1,2}):(\d{2}),\s*(\w{3})\s*(\d{1,2})/);
+      if (!match) {
+        console.error('Unable to parse FlightAPI time format:', timeString);
+        return null;
+      }
+      
+      const [, hours, minutes, monthAbbr, day] = match;
+      
+      // Map month abbreviations to numbers
+      const monthMap: { [key: string]: number } = {
+        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+        'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+      };
+      
+      const monthNum = monthMap[monthAbbr];
+      if (monthNum === undefined) {
+        console.error('Unknown month abbreviation:', monthAbbr);
+        return null;
+      }
+      
+      // Use the year from the baseDate
+      const parsedDate = new Date(baseDate.getFullYear(), monthNum, parseInt(day), parseInt(hours), parseInt(minutes));
+      
+      // Validate the parsed date
+      if (isNaN(parsedDate.getTime())) {
+        console.error('Invalid parsed date from:', timeString);
+        return null;
+      }
+      
+      return parsedDate;
+    } catch (error) {
+      console.error('Error parsing FlightAPI time:', timeString, error);
+      return null;
+    }
+  }
+
+  private validateDate(date: Date | null): Date | null {
+    if (!date) return null;
+    if (isNaN(date.getTime())) return null;
+    return date;
   }
 
   private calculateDelayMinutes(scheduled: Date | null, actual: Date | null): number {
