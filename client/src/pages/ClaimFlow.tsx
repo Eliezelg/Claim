@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 import { t } from "@/lib/i18n";
 import { Header } from "@/components/Layout/Header";
 import { Footer } from "@/components/Layout/Footer";
@@ -8,6 +9,7 @@ import { CompensationCalculator } from "@/components/Claim/CompensationCalculato
 import { ClaimForm } from "@/components/Claim/ClaimForm";
 import { DocumentUpload } from "@/components/Documents/DocumentUpload";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { FlightSearchResult } from "@/types/flight";
 import { ClaimFormData } from "@/types/claim";
 
@@ -15,6 +17,7 @@ type ClaimStep = 'search' | 'compensation' | 'form' | 'documents' | 'complete';
 
 export default function ClaimFlow() {
   const { language, isRTL } = useLanguage();
+  const { isAuthenticated, isLoading } = useAuth();
   const [currentStep, setCurrentStep] = useState<ClaimStep>('search');
   const [flightResult, setFlightResult] = useState<FlightSearchResult | null>(null);
   const [claimData, setClaimData] = useState<Partial<ClaimFormData>>({});
@@ -25,17 +28,24 @@ export default function ClaimFlow() {
   };
 
   const handleStartClaim = () => {
-    if (flightResult) {
-      setClaimData({
-        flightNumber: flightResult.flight.flightNumber,
-        flightDate: new Date(flightResult.flight.date).toISOString().split('T')[0],
-        departureAirport: flightResult.flight.departureAirport.iataCode,
-        arrivalAirport: flightResult.flight.arrivalAirport.iataCode,
-        jurisdiction: flightResult.compensation.recommended?.jurisdiction,
-        finalCompensationAmount: flightResult.compensation.recommended?.amount,
-      });
-      setCurrentStep('form');
+    if (!flightResult) return;
+    
+    // Check if user is authenticated before starting claim
+    if (!isAuthenticated) {
+      // Redirect to login
+      window.location.href = '/api/login';
+      return;
     }
+    
+    setClaimData({
+      flightNumber: flightResult.flight.flightNumber,
+      flightDate: new Date(flightResult.flight.date).toISOString().split('T')[0],
+      departureAirport: flightResult.flight.departureAirport.iataCode,
+      arrivalAirport: flightResult.flight.arrivalAirport.iataCode,
+      jurisdiction: flightResult.compensation.recommended?.jurisdiction,
+      finalCompensationAmount: flightResult.compensation.recommended?.amount,
+    });
+    setCurrentStep('form');
   };
 
   const handleClaimFormSubmit = (data: ClaimFormData) => {
