@@ -75,6 +75,13 @@ export const flightStatusEnum = pgEnum('flight_status', [
   'ARRIVED'
 ]);
 
+export const flightTypeEnum = pgEnum('flight_type', [
+  'PASSENGER',
+  'CARGO',
+  'CHARTER',
+  'UNKNOWN'
+]);
+
 // Airlines table
 export const airlines = pgTable("airlines", {
   id: varchar("id").primaryKey(),
@@ -110,8 +117,20 @@ export const flights = pgTable("flights", {
   scheduledArrival: timestamp("scheduled_arrival"),
   actualArrival: timestamp("actual_arrival"),
   status: flightStatusEnum("status").default('ON_TIME'),
+  flightType: flightTypeEnum("flight_type").default('PASSENGER'),
   distance: integer("distance"), // in kilometers
   flightDate: timestamp("flight_date").notNull(),
+  
+  // Timezone information
+  departureTimezone: varchar("departure_timezone"), // IANA timezone name
+  arrivalTimezone: varchar("arrival_timezone"), // IANA timezone name
+  
+  // Provider metadata for audit trail
+  dataProvider: varchar("data_provider"), // e.g., 'FlightAware', 'AeroDataBox'
+  providerFlightId: varchar("provider_flight_id"), // Provider's internal flight ID
+  dataConfidence: decimal("data_confidence", { precision: 3, scale: 2 }), // 0.00-1.00
+  rawProviderData: jsonb("raw_provider_data"), // Store raw API response for audit
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
@@ -315,3 +334,4 @@ export type ClaimStatus = typeof claimStatusEnum.enumValues[number];
 export type Jurisdiction = typeof jurisdictionEnum.enumValues[number];
 export type DocumentType = typeof documentTypeEnum.enumValues[number];
 export type FlightStatus = typeof flightStatusEnum.enumValues[number];
+export type FlightType = typeof flightTypeEnum.enumValues[number];
