@@ -10,24 +10,26 @@ import Landing from "@/pages/Landing";
 import Home from "@/pages/Home";
 import ClaimFlow from "@/pages/ClaimFlow";
 import Dashboard from "@/pages/Dashboard";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminClaims from "./pages/Admin/AdminClaims";
+import AdminUsers from "./pages/Admin/AdminUsers";
+import AdminReports from "./pages/Admin/AdminReports";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  // Show either landing or home based on authentication for root path
+  const HomeComponent = isLoading || !isAuthenticated ? Landing : Home;
+
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
-        <>
-          <Route path="/" component={Landing} />
-          <Route path="/claim" component={ClaimFlow} />
-        </>
-      ) : (
-        <>
-          <Route path="/" component={Home} />
-          <Route path="/claim" component={ClaimFlow} />
-          <Route path="/dashboard" component={Dashboard} />
-        </>
-      )}
+      <Route path="/" component={HomeComponent} />
+      <Route path="/claim" component={ClaimFlow} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/claims" component={AdminClaims} />
+      <Route path="/admin/users" component={AdminUsers} />
+      <Route path="/admin/reports" component={AdminReports} />
       <Route component={NotFound} />
     </Switch>
   );
