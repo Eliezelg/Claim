@@ -72,7 +72,8 @@ export const flightStatusEnum = pgEnum('flight_status', [
   'DIVERTED',
   'BOARDING',
   'DEPARTED',
-  'ARRIVED'
+  'ARRIVED',
+  'UNKNOWN'
 ]);
 
 export const flightTypeEnum = pgEnum('flight_type', [

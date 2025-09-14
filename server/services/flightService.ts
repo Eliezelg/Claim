@@ -110,7 +110,7 @@ export class FlightService {
     }
   }
 
-  private async storeFlight(flightData: FlightData): Promise<void> {
+  private async storeFlight(flightData: FlightData, providerMeta?: any): Promise<void> {
     try {
       // Ensure airports exist
       const depAirport = await storage.getAirportByIataCode(flightData.departureAirport.iataCode);
@@ -172,6 +172,11 @@ export class FlightService {
         status: flightData.status,
         distance: flightData.distance,
         flightDate: flightData.date,
+        // Provider metadata
+        dataProvider: providerMeta?.provider || null,
+        dataConfidence: providerMeta?.confidence || null,
+        rawProviderData: providerMeta?.rawResponse || null,
+        providerFlightId: providerMeta?.providerId || null,
       };
 
       await storage.createFlight(flightToStore);
@@ -293,7 +298,7 @@ export class FlightService {
     try {
       // Convert from NormalizedFlight to our internal FlightData format
       const flightData = this.convertNormalizedToFlightData(normalizedFlight);
-      await this.storeFlight(flightData);
+      await this.storeFlight(flightData, normalizedFlight.providerMeta);
     } catch (error) {
       console.error('Error storing normalized flight data:', error);
     }
@@ -313,12 +318,7 @@ export class FlightService {
       flightType: this.mapProviderFlightType(normalizedFlight.flightType),
       delayMinutes: normalizedFlight.delayMinutes,
       distance: normalizedFlight.distance,
-      airline: normalizedFlight.airline,
-      dataProvider: normalizedFlight.providerMeta.provider,
-      providerMeta: {
-        confidence: normalizedFlight.providerMeta.confidence,
-        lastUpdated: normalizedFlight.providerMeta.lastUpdated
-      }
+      airline: normalizedFlight.airline
     };
   }
   

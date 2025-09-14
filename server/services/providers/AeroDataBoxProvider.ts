@@ -86,6 +86,9 @@ export class AeroDataBoxProvider implements IFlightProvider {
       // Detect flight type
       const flightType = this.detectFlightType(flight);
       
+      // Check if this is a historical flight (older than 24h)
+      const isHistoricalFlight = date.getTime() < Date.now() - (24 * 60 * 60 * 1000);
+      
       // Parse times with timezone handling
       const scheduledDeparture = this.parseAeroDataBoxTime(
         flight.departure.scheduledTime?.local || flight.departure.scheduledTime?.utc,
@@ -95,17 +98,29 @@ export class AeroDataBoxProvider implements IFlightProvider {
         flight.arrival.scheduledTime?.local || flight.arrival.scheduledTime?.utc,
         flight.arrival.airport?.timeZone
       );
-      // Use actualTime if available, otherwise fallback to predictedTime for delay calculation
-      const actualDeparture = this.parseAeroDataBoxTime(
-        flight.departure.actualTime?.local || flight.departure.actualTime?.utc ||
-        flight.departure.predictedTime?.local || flight.departure.predictedTime?.utc,
+      
+      // For historical flights, only use actualTime if available - DO NOT fallback to predictedTime
+      // For current/future flights, allow fallback to predictedTime
+      let actualDeparture = this.parseAeroDataBoxTime(
+        flight.departure.actualTime?.local || flight.departure.actualTime?.utc,
         flight.departure.airport?.timeZone
       );
-      const actualArrival = this.parseAeroDataBoxTime(
-        flight.arrival.actualTime?.local || flight.arrival.actualTime?.utc ||
-        flight.arrival.predictedTime?.local || flight.arrival.predictedTime?.utc,
+      let actualArrival = this.parseAeroDataBoxTime(
+        flight.arrival.actualTime?.local || flight.arrival.actualTime?.utc,
         flight.arrival.airport?.timeZone
       );
+      
+      // Only fallback to predictedTime for non-historical flights
+      if (!isHistoricalFlight) {
+        actualDeparture = actualDeparture || this.parseAeroDataBoxTime(
+          flight.departure.predictedTime?.local || flight.departure.predictedTime?.utc,
+          flight.departure.airport?.timeZone
+        );
+        actualArrival = actualArrival || this.parseAeroDataBoxTime(
+          flight.arrival.predictedTime?.local || flight.arrival.predictedTime?.utc,
+          flight.arrival.airport?.timeZone
+        );
+      }
       
       if (!scheduledDeparture || !scheduledArrival) {
         console.error('AeroDataBox: Could not parse scheduled times');
@@ -227,7 +242,7 @@ export class AeroDataBoxProvider implements IFlightProvider {
   }
   
   private mapAeroDataBoxStatus(status: string): FlightStatus {
-    if (!status) return 'ON_TIME';
+    if (!status || status.toLowerCase() === 'unknown') return 'UNKNOWN';
     
     const statusLower = status.toLowerCase();
     
@@ -239,7 +254,7 @@ export class AeroDataBoxProvider implements IFlightProvider {
     if (statusLower.includes('boarding')) return 'BOARDING';
     if (statusLower.includes('scheduled') || statusLower.includes('on time')) return 'ON_TIME';
     
-    return 'ON_TIME';
+    return 'UNKNOWN';
   }
   
   private calculateDistance(flight: any): number {
