@@ -1,6 +1,7 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./replitAuth";
+import path from "path";
 
 // Import modular routes
 import { authRoutes } from "./routes/authRoutes";
@@ -19,6 +20,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/claims', claimRoutes);
   app.use('/api/documents', documentRoutes);
   app.use('/api/admin', adminRoutes);
+
+  // Serve React static files for SPA fallback
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.url.startsWith('/api/')) {
+      return next(); // If it's an API route, let the API handlers deal with it
+    }
+    res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
+  });
+
 
   const httpServer = createServer(app);
   return httpServer;
