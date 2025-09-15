@@ -14,3 +14,8 @@ ON CONFLICT (email)
 DO UPDATE SET 
   role = 'ADMIN',
   updated_at = NOW();
+
+-- Mise à jour pour faire admin@webpro200.com SUPERADMIN
+UPDATE users 
+SET role = 'SUPERADMIN', updated_at = NOW() 
+WHERE email = 'admin@webpro200.com';
