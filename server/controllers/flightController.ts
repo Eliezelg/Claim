@@ -76,7 +76,14 @@ export class FlightController {
       res.json(result);
     } catch (error) {
       console.error('Error calculating compensation:', error);
-      res.status(500).json({ message: 'Failed to calculate compensation' });
+      
+      // S'assurer qu'on renvoie toujours du JSON
+      if (!res.headersSent) {
+        return res.status(500).json({ 
+          message: 'Failed to calculate compensation',
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
     }
   }
 }
