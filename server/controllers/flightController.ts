@@ -46,23 +46,34 @@ export class FlightController {
     try {
       const { flight_number, date } = req.body;
       
+      console.log('Calculating compensation for:', { flight_number, date });
+      
       if (!flight_number || !date) {
+        console.error('Missing required fields:', { flight_number, date });
         return res.status(400).json({ message: 'Flight number and date are required' });
       }
 
       const flightDate = new Date(date);
+      console.log('Parsed flight date:', flightDate);
+      
       const flightData = await flightService.getFlightData(flight_number, flightDate);
+      console.log('Flight data retrieved:', flightData ? 'Found' : 'Not found');
       
       if (!flightData) {
+        console.log('No flight data found for:', flight_number, 'on', flightDate.toISOString());
         return res.status(404).json({ message: 'Flight not found' });
       }
 
       const compensation = compensationCalculator.calculateCompensation(flightData);
+      console.log('Compensation calculated:', compensation);
       
-      res.json({
+      const result = {
         flight: flightData,
         compensation,
-      });
+      };
+      
+      console.log('Sending response:', JSON.stringify(result, null, 2));
+      res.json(result);
     } catch (error) {
       console.error('Error calculating compensation:', error);
       res.status(500).json({ message: 'Failed to calculate compensation' });

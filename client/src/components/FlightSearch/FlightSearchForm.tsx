@@ -39,12 +39,34 @@ export function FlightSearchForm({ onResult }: FlightSearchFormProps) {
     setIsLoading(true);
     
     try {
+      console.log('Sending flight search request:', {
+        flight_number: formData.flightNumber.toUpperCase(),
+        date: formData.flightDate,
+      });
+      
       const response = await apiRequest('POST', '/api/compensation/calculate', {
         flight_number: formData.flightNumber.toUpperCase(),
         date: formData.flightDate,
       });
       
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Server error response:', errorText);
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
+      
       const result = await response.json();
+      console.log('Flight search result:', result);
+      
+      // Vérifier la structure de la réponse
+      if (!result || !result.flight) {
+        console.error('Invalid response structure:', result);
+        throw new Error('Invalid response format from server');
+      }
+      
       onResult(result);
       
       toast({
@@ -53,9 +75,16 @@ export function FlightSearchForm({ onResult }: FlightSearchFormProps) {
       });
     } catch (error) {
       console.error('Flight search error:', error);
+      
+      // Logs plus détaillés pour l'erreur
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      
       toast({
         title: "Flight Not Found",
-        description: "Please check your flight number and date and try again",
+        description: error instanceof Error ? error.message : "Please check your flight number and date and try again",
         variant: "destructive",
       });
     } finally {
