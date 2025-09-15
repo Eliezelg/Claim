@@ -26,7 +26,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (req.url.startsWith('/api/')) {
       return next(); // If it's an API route, let the API handlers deal with it
     }
-    res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
+    res.sendFile(path.resolve(import.meta.dirname, "../client/dist", "index.html"));
   });
 
 
