@@ -39,6 +39,28 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
+  // Log toutes les routes enregistrées
+  app._router.stack.forEach((middleware: any) => {
+    if (middleware.route) {
+      console.log(`Route: ${Object.keys(middleware.route.methods)} ${middleware.route.path}`);
+    } else if (middleware.name === 'router') {
+      middleware.handle.stack.forEach((handler: any) => {
+        if (handler.route) {
+          console.log(`Route: ${Object.keys(handler.route.methods)} ${handler.route.path}`);
+        }
+      });
+    }
+  });
+
+  // Middleware pour capturer les routes non trouvées
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.path.startsWith('/api/')) {
+      console.log(`API route not found: ${req.method} ${req.path}`);
+      return res.status(404).json({ message: `Route not found: ${req.method} ${req.path}` });
+    }
+    next();
+  });
+
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";

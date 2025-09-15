@@ -15,7 +15,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register route modules
   app.use('/api/auth', authRoutes);
-  app.use('/api/flights', flightRoutes);
+  app.use('/api', flightRoutes); // Changer de /api/flights à /api pour que /api/compensation/calculate fonctionne
   app.use('/api/claims', claimRoutes);
   app.use('/api/documents', documentRoutes);
   app.use('/api/admin', adminRoutes);
