@@ -24,14 +24,26 @@ import {
   type ClaimTimeline,
   type ClaimStatus,
   type UserRole,
+  type UpdateUserPreferences,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, like, or, gte, lte, count, sum } from "drizzle-orm";
 
 export interface IStorage {
-  // User operations (required for Replit Auth)
+  // User operations (JWT Auth)
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  createUserWithPassword(userData: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    preferredLanguage?: string;
+    passwordHash: string;
+    emailVerified?: boolean;
+    role?: UserRole;
+  }): Promise<User>;
+  updateUserPreferences(userId: string, preferences: UpdateUserPreferences): Promise<User | undefined>;
 
   // Claim operations
   createClaim(claim: InsertClaim): Promise<Claim>;
@@ -113,6 +125,47 @@ export class DatabaseStorage implements IStorage {
           updatedAt: new Date(),
         },
       })
+      .returning();
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUserWithPassword(userData: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    preferredLanguage?: string;
+    passwordHash: string;
+    emailVerified?: boolean;
+    role?: UserRole;
+  }): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        preferredLanguage: userData.preferredLanguage || 'en',
+        passwordHash: userData.passwordHash,
+        emailVerified: userData.emailVerified || false,
+        role: userData.role || 'USER',
+      })
+      .returning();
+    return user;
+  }
+
+  async updateUserPreferences(userId: string, preferences: UpdateUserPreferences): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({
+        ...preferences,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
       .returning();
     return user;
   }

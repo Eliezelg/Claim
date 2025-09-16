@@ -77,14 +77,16 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// User storage table (required for Replit Auth)
+// User storage table (JWT Auth)
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: varchar("email").unique(),
+  email: varchar("email").unique().notNull(),
+  passwordHash: varchar("password_hash"), // For local auth
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   preferredLanguage: varchar("preferred_language").default('en'),
+  emailVerified: boolean("email_verified").default(false),
   role: userRoleEnum("role").default('USER'),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -284,6 +286,26 @@ export const upsertUserSchema = insertUserSchema.pick({
   profileImageUrl: true,
 });
 
+// Authentication schemas
+export const registerSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  preferredLanguage: z.string().default('en'),
+});
+
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+
+export const updateUserPreferencesSchema = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  preferredLanguage: z.string().optional(),
+});
+
 export const insertClaimSchema = createInsertSchema(claims).omit({
   id: true,
   claimNumber: true,
@@ -318,6 +340,9 @@ export const insertClaimTimelineSchema = createInsertSchema(claimTimeline).omit(
 // Types
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type RegisterUser = z.infer<typeof registerSchema>;
+export type LoginUser = z.infer<typeof loginSchema>;
+export type UpdateUserPreferences = z.infer<typeof updateUserPreferencesSchema>;
 export type InsertClaim = z.infer<typeof insertClaimSchema>;
 export type Claim = typeof claims.$inferSelect;
 export type ClaimWithRelations = Claim & {

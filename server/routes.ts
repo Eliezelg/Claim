@@ -1,20 +1,20 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { setupAuth } from "./replitAuth";
+// Remove Replit Auth - now using JWT
+// import { setupAuth } from "./replitAuth";
 
 // Import modular routes
-import { authRoutes } from "./routes/authRoutes";
+import jwtAuthRoutes from "./authRoutes"; // New JWT auth routes
 import { flightRoutes } from "./routes/flightRoutes";
 import { claimRoutes } from "./routes/claimRoutes";
 import { documentRoutes } from "./routes/documentRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // JWT Auth routes - replaces Replit Auth
+  app.use('/api/auth', jwtAuthRoutes);
 
   // Register route modules
-  app.use('/api/auth', authRoutes);
   app.use('/api', flightRoutes); // Changer de /api/flights à /api pour que /api/compensation/calculate fonctionne
   app.use('/api/claims', claimRoutes);
   app.use('/api/documents', documentRoutes);
