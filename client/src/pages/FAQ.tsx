@@ -149,23 +149,23 @@ export default function FAQ() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Vous ne trouvez pas votre réponse ?
+              {t('faq.help.title')}
             </h2>
             <p className="text-xl text-gray-600 mb-8">
-              Notre équipe d'experts est là pour vous aider avec toutes vos questions
+              {t('faq.help.description')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/contact"
                 className="bg-purple-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-purple-700 transition-colors"
               >
-                Nous contacter
+                {t('faq.help.contactUs')}
               </a>
               <a
                 href="/claim"
                 className="border-2 border-purple-600 text-purple-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-purple-600 hover:text-white transition-colors"
               >
-                Vérifier mon vol
+                {t('faq.help.checkFlight')}
               </a>
             </div>
           </div>
@@ -182,21 +182,21 @@ export default function FAQ() {
                   <Clock className="w-8 h-8 text-green-600" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">24h</h3>
-                <p className="text-gray-600">Temps de réponse moyen</p>
+                <p className="text-gray-600">{t('faq.stats.responseTime')}</p>
               </div>
               <div>
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Scale className="w-8 h-8 text-blue-600" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">98%</h3>
-                <p className="text-gray-600">Taux de réussite</p>
+                <p className="text-gray-600">{t('faq.stats.successRate')}</p>
               </div>
               <div>
                 <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <HelpCircle className="w-8 h-8 text-purple-600" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">100%</h3>
-                <p className="text-gray-600">Support gratuit</p>
+                <p className="text-gray-600">{t('faq.stats.freeSupport')}</p>
               </div>
             </div>
           </div>

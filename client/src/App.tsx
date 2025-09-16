@@ -51,25 +51,8 @@ function RootComponent() {
 }
 
 function LanguageRouter() {
-  const { language, setLanguage } = useLanguage();
-  const [location, setLocation] = useLocation();
-
-  // Extract language from URL and set it
-  useEffect(() => {
-    const pathSegments = location.split('/').filter(Boolean);
-    const firstSegment = pathSegments[0];
-    
-    if (['en', 'he', 'fr', 'es'].includes(firstSegment)) {
-      if (firstSegment !== language) {
-        setLanguage(firstSegment as any);
-      }
-    } else {
-      // If no language in URL, redirect to current language
-      if (language !== 'en') {
-        setLocation(`/${language}${location}`);
-      }
-    }
-  }, [location, language, setLanguage, setLocation]);
+  const { language } = useLanguage();
+  const [location] = useLocation();
 
   // Get the path without language prefix
   const getPathWithoutLanguage = (path: string) => {

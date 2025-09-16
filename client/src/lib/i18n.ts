@@ -24,6 +24,10 @@ export interface TranslationKeys {
   'howItWorks.benefits.legal': string;
   'howItWorks.benefits.noWin': string;
   'howItWorks.benefits.multilingual': string;
+  'howItWorks.cta.title': string;
+  'howItWorks.cta.description': string;
+  'howItWorks.cta.checkFlight': string;
+  'howItWorks.cta.contactUs': string;
 
   // Your Rights Page
   'rights.title': string;
@@ -32,12 +36,33 @@ export interface TranslationKeys {
   'rights.eu.description': string;
   'rights.eu.conditions': string;
   'rights.eu.amounts': string;
+  'rights.eu.conditionsTitle': string;
+  'rights.eu.amountsTitle': string;
+  'rights.eu.condition1': string;
+  'rights.eu.condition2': string;
+  'rights.eu.condition3': string;
+  'rights.eu.condition4': string;
+  'rights.eu.condition5': string;
   'rights.israel.title': string;
   'rights.israel.description': string;
   'rights.israel.conditions': string;
   'rights.israel.amounts': string;
+  'rights.israel.conditionsTitle': string;
+  'rights.israel.amountsTitle': string;
+  'rights.israel.condition1': string;
+  'rights.israel.condition2': string;
+  'rights.israel.condition3': string;
   'rights.timeline.title': string;
   'rights.timeline.description': string;
+  'rights.timeline.years6': string;
+  'rights.timeline.years2': string;
+  'rights.timeline.year1': string;
+  'rights.timeline.years6Desc': string;
+  'rights.timeline.years2Desc': string;
+  'rights.timeline.year1Desc': string;
+  'rights.cta.title': string;
+  'rights.cta.description': string;
+  'rights.cta.checkFlight': string;
 
   // FAQ Page
   'faq.title': string;
@@ -59,6 +84,13 @@ export interface TranslationKeys {
   'faq.process.a1': string;
   'faq.process.q2': string;
   'faq.process.a2': string;
+  'faq.help.title': string;
+  'faq.help.description': string;
+  'faq.help.contactUs': string;
+  'faq.help.checkFlight': string;
+  'faq.stats.responseTime': string;
+  'faq.stats.successRate': string;
+  'faq.stats.freeSupport': string;
 
   // Contact Page
   'contact.title': string;
@@ -68,11 +100,36 @@ export interface TranslationKeys {
   'contact.form.subject': string;
   'contact.form.message': string;
   'contact.form.submit': string;
+  'contact.form.title': string;
+  'contact.form.description': string;
+  'contact.form.subjectPlaceholder': string;
+  'contact.form.messagePlaceholder': string;
+  'contact.form.submitting': string;
   'contact.info.title': string;
   'contact.info.email': string;
   'contact.info.phone': string;
   'contact.info.address': string;
   'contact.info.hours': string;
+  'contact.info.emailDesc': string;
+  'contact.info.phoneDesc': string;
+  'contact.info.addressDesc': string;
+  'contact.info.hoursDesc': string;
+  'contact.subjects.general': string;
+  'contact.subjects.claimIssue': string;
+  'contact.subjects.statusRequest': string;
+  'contact.subjects.technical': string;
+  'contact.subjects.partnership': string;
+  'contact.subjects.other': string;
+  'contact.quickActions.title': string;
+  'contact.quickActions.checkFlight': string;
+  'contact.quickActions.faq': string;
+  'contact.quickActions.howItWorks': string;
+  'contact.location.title': string;
+  'contact.location.mapPlaceholder': string;
+  'contact.cta.title': string;
+  'contact.cta.description': string;
+  'contact.cta.checkFlight': string;
+  'contact.cta.contactUs': string;
 
   // Hero Section
   'hero.title': string;
@@ -186,6 +243,10 @@ export const translations: Record<string, TranslationKeys> = {
     'howItWorks.benefits.legal': 'Specialized legal expertise',
     'howItWorks.benefits.noWin': 'No win, no fee',
     'howItWorks.benefits.multilingual': 'Complete multilingual support',
+    'howItWorks.cta.title': 'Ready to claim your compensation?',
+    'howItWorks.cta.description': 'Start now and recover the money you are owed',
+    'howItWorks.cta.checkFlight': 'Check my flight',
+    'howItWorks.cta.contactUs': 'Contact us',
 
     // Your Rights Page
     'rights.title': 'Your rights in case of flight disruption',
@@ -200,6 +261,27 @@ export const translations: Record<string, TranslationKeys> = {
     'rights.israel.amounts': 'Amounts: Up to 1,500 NIS depending on delay duration',
     'rights.timeline.title': 'Claim deadlines',
     'rights.timeline.description': 'You have up to 6 years to claim your compensation under European regulation',
+    'rights.eu.conditionsTitle': 'Eligibility conditions',
+    'rights.eu.amountsTitle': 'Compensation amounts',
+    'rights.eu.condition1': '3h+ delay for long-haul flights (>3,500 km)',
+    'rights.eu.condition2': '2h+ delay for medium-haul flights (1,500-3,500 km)',
+    'rights.eu.condition3': '1h+ delay for short-haul flights (<1,500 km)',
+    'rights.eu.condition4': 'Cancellation less than 14 days before departure',
+    'rights.eu.condition5': 'Denied boarding due to overbooking',
+    'rights.israel.conditionsTitle': 'Eligibility conditions',
+    'rights.israel.amountsTitle': 'Compensation amounts',
+    'rights.israel.condition1': '8h+ delay for international flights',
+    'rights.israel.condition2': 'Flight to/from Israel',
+    'rights.israel.condition3': 'Delay not due to extraordinary circumstances',
+    'rights.timeline.years6': 'Years',
+    'rights.timeline.years2': 'Years',
+    'rights.timeline.year1': 'Year',
+    'rights.timeline.years6Desc': 'Maximum deadline to claim under European regulation',
+    'rights.timeline.years2Desc': 'Recommended deadline for effective claim',
+    'rights.timeline.year1Desc': 'Deadline for claims under Israeli law',
+    'rights.cta.title': 'Check your rights now',
+    'rights.cta.description': 'Find out if you are eligible for compensation in just a few minutes',
+    'rights.cta.checkFlight': 'Check my flight',
 
     // FAQ Page
     'faq.title': 'Frequently asked questions',
@@ -221,6 +303,13 @@ export const translations: Record<string, TranslationKeys> = {
     'faq.process.a1': 'You must provide your boarding pass, plane ticket, and any document proving the delay (airline notifications, photos of information screens).',
     'faq.process.q2': 'What happens if the airline refuses?',
     'faq.process.a2': 'If the airline refuses, we can initiate legal proceedings to enforce your rights before the competent courts.',
+    'faq.help.title': 'Can\'t find your answer?',
+    'faq.help.description': 'Our team of experts is here to help you with all your questions',
+    'faq.help.contactUs': 'Contact us',
+    'faq.help.checkFlight': 'Check my flight',
+    'faq.stats.responseTime': 'Average response time',
+    'faq.stats.successRate': 'Success rate',
+    'faq.stats.freeSupport': 'Free support',
 
     // Contact Page
     'contact.title': 'Contact us',
@@ -235,6 +324,31 @@ export const translations: Record<string, TranslationKeys> = {
     'contact.info.phone': '+33 1 23 45 67 89',
     'contact.info.address': '123 Avenue des Champs-Élysées, 75008 Paris, France',
     'contact.info.hours': 'Mon-Fri: 9am-6pm, Sat: 9am-1pm',
+    'contact.form.title': 'Send us a message',
+    'contact.form.description': 'Fill out the form below and we will respond quickly',
+    'contact.form.subjectPlaceholder': 'Select a subject',
+    'contact.form.messagePlaceholder': 'Describe your question or problem in detail...',
+    'contact.form.submitting': 'Sending...',
+    'contact.info.emailDesc': 'Response within 24h',
+    'contact.info.phoneDesc': 'Mon-Fri 9am-6pm',
+    'contact.info.addressDesc': 'Main office',
+    'contact.info.hoursDesc': 'Customer support',
+    'contact.subjects.general': 'General question',
+    'contact.subjects.claimIssue': 'Issue with my claim',
+    'contact.subjects.statusRequest': 'Status request',
+    'contact.subjects.technical': 'Technical question',
+    'contact.subjects.partnership': 'Partnership',
+    'contact.subjects.other': 'Other',
+    'contact.quickActions.title': 'Quick actions',
+    'contact.quickActions.checkFlight': 'Check my flight',
+    'contact.quickActions.faq': 'View FAQ',
+    'contact.quickActions.howItWorks': 'How it works',
+    'contact.location.title': 'Our location',
+    'contact.location.mapPlaceholder': 'Interactive map (to be implemented)',
+    'contact.cta.title': 'Ready to claim your compensation?',
+    'contact.cta.description': 'Start now and recover the money you are owed',
+    'contact.cta.checkFlight': 'Check my flight',
+    'contact.cta.contactUs': 'Contact us',
 
     // Flight Search Form
     'form.flightNumber.label': 'Flight Number',
@@ -339,6 +453,10 @@ export const translations: Record<string, TranslationKeys> = {
     'howItWorks.benefits.legal': 'מומחיות משפטית מקצועית',
     'howItWorks.benefits.noWin': 'אין רווח - אין תשלום',
     'howItWorks.benefits.multilingual': 'תמיכה רב-לשונית מלאה',
+    'howItWorks.cta.title': 'מוכנים לתבוע את הפיצוי שלכם?',
+    'howItWorks.cta.description': 'התחילו עכשיו וקבלו בחזרה את הכסף שמגיע לכם',
+    'howItWorks.cta.checkFlight': 'בדקו את הטיסה שלי',
+    'howItWorks.cta.contactUs': 'צרו קשר',
 
     // Your Rights Page
     'rights.title': 'הזכויות שלכם במקרה של הפרעה בטיסה',
@@ -353,6 +471,27 @@ export const translations: Record<string, TranslationKeys> = {
     'rights.israel.amounts': 'סכומים: עד 1,500 שקל בהתאם למשך העיכוב',
     'rights.timeline.title': 'מועדי הגשת תביעה',
     'rights.timeline.description': 'יש לכם עד 6 שנים להגיש תביעה לפיצוי לפי התקנה האירופית',
+    'rights.eu.conditionsTitle': 'תנאי זכאות',
+    'rights.eu.amountsTitle': 'סכומי פיצוי',
+    'rights.eu.condition1': 'עיכוב של 3+ שעות לטיסות ארוכות (>3,500 ק"מ)',
+    'rights.eu.condition2': 'עיכוב של 2+ שעות לטיסות בינוניות (1,500-3,500 ק"מ)',
+    'rights.eu.condition3': 'עיכוב של שעה+ לטיסות קצרות (<1,500 ק"מ)',
+    'rights.eu.condition4': 'ביטול פחות מ-14 ימים לפני היציאה',
+    'rights.eu.condition5': 'סירוב עלייה למטוס בגלל הזמנה יתר',
+    'rights.israel.conditionsTitle': 'תנאי זכאות',
+    'rights.israel.amountsTitle': 'סכומי פיצוי',
+    'rights.israel.condition1': 'עיכוב של 8+ שעות לטיסות בינלאומיות',
+    'rights.israel.condition2': 'טיסה לישראל או מישראל',
+    'rights.israel.condition3': 'עיכוב שלא נגרם מנסיבות יוצאות דופן',
+    'rights.timeline.years6': 'שנים',
+    'rights.timeline.years2': 'שנים',
+    'rights.timeline.year1': 'שנה',
+    'rights.timeline.years6Desc': 'מועד מקסימלי להגשת תביעה לפי התקנה האירופית',
+    'rights.timeline.years2Desc': 'מועד מומלץ לתביעה יעילה',
+    'rights.timeline.year1Desc': 'מועד להגשת תביעות לפי החוק הישראלי',
+    'rights.cta.title': 'בדקו את הזכויות שלכם עכשיו',
+    'rights.cta.description': 'גלו אם אתם זכאים לפיצוי תוך דקות ספורות',
+    'rights.cta.checkFlight': 'בדקו את הטיסה שלי',
 
     // FAQ Page
     'faq.title': 'שאלות נפוצות',
@@ -374,6 +513,13 @@ export const translations: Record<string, TranslationKeys> = {
     'faq.process.a1': 'עליכם לספק את כרטיס העלייה למטוס, כרטיס הטיסה, וכל מסמך המוכיח את העיכוב (הודעות של חברת התעופה, תמונות של מסכי מידע).',
     'faq.process.q2': 'מה קורה אם חברת התעופה מסרבת?',
     'faq.process.a2': 'אם חברת התעופה מסרבת, אנחנו יכולים ליזום הליכים משפטיים לאכיפת הזכויות שלכם בפני בתי המשפט המוסמכים.',
+    'faq.help.title': 'לא מוצאים את התשובה?',
+    'faq.help.description': 'הצוות המומחים שלנו כאן לעזור לכם עם כל השאלות',
+    'faq.help.contactUs': 'צרו קשר',
+    'faq.help.checkFlight': 'בדקו את הטיסה שלי',
+    'faq.stats.responseTime': 'זמן תגובה ממוצע',
+    'faq.stats.successRate': 'שיעור הצלחה',
+    'faq.stats.freeSupport': 'תמיכה חינמית',
 
     // Contact Page
     'contact.title': 'צרו קשר',
@@ -388,6 +534,31 @@ export const translations: Record<string, TranslationKeys> = {
     'contact.info.phone': '+33 1 23 45 67 89',
     'contact.info.address': '123 Avenue des Champs-Élysées, 75008 Paris, France',
     'contact.info.hours': 'ב׳-ו׳: 9:00-18:00, ש׳: 9:00-13:00',
+    'contact.form.title': 'שלחו לנו הודעה',
+    'contact.form.description': 'מלאו את הטופס למטה ואנחנו נגיב במהירות',
+    'contact.form.subjectPlaceholder': 'בחרו נושא',
+    'contact.form.messagePlaceholder': 'תארו את השאלה או הבעיה שלכם בפירוט...',
+    'contact.form.submitting': 'שולח...',
+    'contact.info.emailDesc': 'תגובה תוך 24 שעות',
+    'contact.info.phoneDesc': 'ב׳-ו׳ 9:00-18:00',
+    'contact.info.addressDesc': 'משרד ראשי',
+    'contact.info.hoursDesc': 'תמיכה ללקוחות',
+    'contact.subjects.general': 'שאלה כללית',
+    'contact.subjects.claimIssue': 'בעיה עם התביעה שלי',
+    'contact.subjects.statusRequest': 'בקשת סטטוס',
+    'contact.subjects.technical': 'שאלה טכנית',
+    'contact.subjects.partnership': 'שותפות',
+    'contact.subjects.other': 'אחר',
+    'contact.quickActions.title': 'פעולות מהירות',
+    'contact.quickActions.checkFlight': 'בדקו את הטיסה שלי',
+    'contact.quickActions.faq': 'צפו בשאלות נפוצות',
+    'contact.quickActions.howItWorks': 'איך זה עובד',
+    'contact.location.title': 'המיקום שלנו',
+    'contact.location.mapPlaceholder': 'מפה אינטראקטיבית (להטמעה)',
+    'contact.cta.title': 'מוכנים לתבוע את הפיצוי שלכם?',
+    'contact.cta.description': 'התחילו עכשיו וקבלו בחזרה את הכסף שמגיע לכם',
+    'contact.cta.checkFlight': 'בדקו את הטיסה שלי',
+    'contact.cta.contactUs': 'צרו קשר',
 
     // Flight Search Form
     'form.flightNumber.label': 'מספר טיסה',
@@ -492,6 +663,10 @@ export const translations: Record<string, TranslationKeys> = {
     'howItWorks.benefits.legal': 'Expertise juridique spécialisée',
     'howItWorks.benefits.noWin': 'Pas de frais si pas de gain',
     'howItWorks.benefits.multilingual': 'Support multilingue complet',
+    'howItWorks.cta.title': 'Prêt à réclamer votre compensation ?',
+    'howItWorks.cta.description': 'Commencez dès maintenant et récupérez l\'argent qui vous est dû',
+    'howItWorks.cta.checkFlight': 'Vérifier mon vol',
+    'howItWorks.cta.contactUs': 'Nous contacter',
 
     // Your Rights Page
     'rights.title': 'Vos droits en cas de vol perturbé',
@@ -506,6 +681,27 @@ export const translations: Record<string, TranslationKeys> = {
     'rights.israel.amounts': 'Montants : Jusqu\'à 1,500 NIS selon la durée du retard',
     'rights.timeline.title': 'Délais de réclamation',
     'rights.timeline.description': 'Vous avez jusqu\'à 6 ans pour réclamer votre compensation selon la réglementation européenne',
+    'rights.eu.conditionsTitle': 'Conditions d\'éligibilité',
+    'rights.eu.amountsTitle': 'Montants de compensation',
+    'rights.eu.condition1': 'Retard de 3h+ pour les vols long-courrier (>3,500 km)',
+    'rights.eu.condition2': 'Retard de 2h+ pour les vols moyen-courrier (1,500-3,500 km)',
+    'rights.eu.condition3': 'Retard de 1h+ pour les vols court-courrier (<1,500 km)',
+    'rights.eu.condition4': 'Annulation moins de 14 jours avant le départ',
+    'rights.eu.condition5': 'Refus d\'embarquement pour surbooking',
+    'rights.israel.conditionsTitle': 'Conditions d\'éligibilité',
+    'rights.israel.amountsTitle': 'Montants de compensation',
+    'rights.israel.condition1': 'Retard de 8h+ pour les vols internationaux',
+    'rights.israel.condition2': 'Vol au départ ou à destination d\'Israël',
+    'rights.israel.condition3': 'Retard non dû à des circonstances extraordinaires',
+    'rights.timeline.years6': 'Années',
+    'rights.timeline.years2': 'Ans',
+    'rights.timeline.year1': 'An',
+    'rights.timeline.years6Desc': 'Délai maximum pour réclamer selon la réglementation européenne',
+    'rights.timeline.years2Desc': 'Délai recommandé pour une réclamation efficace',
+    'rights.timeline.year1Desc': 'Délai pour les réclamations selon le droit israélien',
+    'rights.cta.title': 'Vérifiez vos droits maintenant',
+    'rights.cta.description': 'Découvrez si vous êtes éligible à une compensation en quelques minutes',
+    'rights.cta.checkFlight': 'Vérifier mon vol',
 
     // FAQ Page
     'faq.title': 'Questions fréquemment posées',
@@ -527,6 +723,13 @@ export const translations: Record<string, TranslationKeys> = {
     'faq.process.a1': 'Vous devez fournir votre carte d\'embarquement, votre billet d\'avion, et tout document prouvant le retard (notifications de la compagnie, photos des écrans d\'information).',
     'faq.process.q2': 'Que se passe-t-il si la compagnie refuse ?',
     'faq.process.a2': 'Si la compagnie refuse, nous pouvons engager des procédures légales pour faire valoir vos droits devant les tribunaux compétents.',
+    'faq.help.title': 'Vous ne trouvez pas votre réponse ?',
+    'faq.help.description': 'Notre équipe d\'experts est là pour vous aider avec toutes vos questions',
+    'faq.help.contactUs': 'Nous contacter',
+    'faq.help.checkFlight': 'Vérifier mon vol',
+    'faq.stats.responseTime': 'Temps de réponse moyen',
+    'faq.stats.successRate': 'Taux de réussite',
+    'faq.stats.freeSupport': 'Support gratuit',
 
     // Contact Page
     'contact.title': 'Contactez-nous',
@@ -541,6 +744,31 @@ export const translations: Record<string, TranslationKeys> = {
     'contact.info.phone': '+33 1 23 45 67 89',
     'contact.info.address': '123 Avenue des Champs-Élysées, 75008 Paris, France',
     'contact.info.hours': 'Lun-Ven: 9h-18h, Sam: 9h-13h',
+    'contact.form.title': 'Envoyez-nous un message',
+    'contact.form.description': 'Remplissez le formulaire ci-dessous et nous vous répondrons rapidement',
+    'contact.form.subjectPlaceholder': 'Sélectionnez un sujet',
+    'contact.form.messagePlaceholder': 'Décrivez votre question ou problème en détail...',
+    'contact.form.submitting': 'Envoi en cours...',
+    'contact.info.emailDesc': 'Réponse sous 24h',
+    'contact.info.phoneDesc': 'Lun-Ven 9h-18h',
+    'contact.info.addressDesc': 'Bureau principal',
+    'contact.info.hoursDesc': 'Support client',
+    'contact.subjects.general': 'Question générale',
+    'contact.subjects.claimIssue': 'Problème avec ma réclamation',
+    'contact.subjects.statusRequest': 'Demande de statut',
+    'contact.subjects.technical': 'Question technique',
+    'contact.subjects.partnership': 'Partenariat',
+    'contact.subjects.other': 'Autre',
+    'contact.quickActions.title': 'Actions rapides',
+    'contact.quickActions.checkFlight': 'Vérifier mon vol',
+    'contact.quickActions.faq': 'Consulter la FAQ',
+    'contact.quickActions.howItWorks': 'Comment ça marche',
+    'contact.location.title': 'Notre localisation',
+    'contact.location.mapPlaceholder': 'Carte interactive (à implémenter)',
+    'contact.cta.title': 'Prêt à réclamer votre compensation ?',
+    'contact.cta.description': 'Commencez dès maintenant et récupérez l\'argent qui vous est dû',
+    'contact.cta.checkFlight': 'Vérifier mon vol',
+    'contact.cta.contactUs': 'Nous contacter',
 
     // Flight Search Form
     'form.flightNumber.label': 'Numéro de vol',
@@ -645,6 +873,10 @@ export const translations: Record<string, TranslationKeys> = {
     'howItWorks.benefits.legal': 'Experiencia legal especializada',
     'howItWorks.benefits.noWin': 'Sin ganancia, sin pago',
     'howItWorks.benefits.multilingual': 'Soporte multilingüe completo',
+    'howItWorks.cta.title': '¿Listo para reclamar tu compensación?',
+    'howItWorks.cta.description': 'Comienza ahora y recupera el dinero que te corresponde',
+    'howItWorks.cta.checkFlight': 'Verificar mi vuelo',
+    'howItWorks.cta.contactUs': 'Contáctanos',
 
     // Your Rights Page
     'rights.title': 'Tus derechos en caso de interrupción de vuelo',
@@ -659,6 +891,27 @@ export const translations: Record<string, TranslationKeys> = {
     'rights.israel.amounts': 'Cantidades: Hasta 1,500 NIS según la duración del retraso',
     'rights.timeline.title': 'Plazos de reclamación',
     'rights.timeline.description': 'Tienes hasta 6 años para reclamar tu compensación según la regulación europea',
+    'rights.eu.conditionsTitle': 'Condiciones de elegibilidad',
+    'rights.eu.amountsTitle': 'Cantidades de compensación',
+    'rights.eu.condition1': 'Retraso de 3h+ para vuelos de larga distancia (>3,500 km)',
+    'rights.eu.condition2': 'Retraso de 2h+ para vuelos de media distancia (1,500-3,500 km)',
+    'rights.eu.condition3': 'Retraso de 1h+ para vuelos de corta distancia (<1,500 km)',
+    'rights.eu.condition4': 'Cancelación menos de 14 días antes de la salida',
+    'rights.eu.condition5': 'Denegación de embarque por sobreventa',
+    'rights.israel.conditionsTitle': 'Condiciones de elegibilidad',
+    'rights.israel.amountsTitle': 'Cantidades de compensación',
+    'rights.israel.condition1': 'Retraso de 8h+ para vuelos internacionales',
+    'rights.israel.condition2': 'Vuelo hacia/desde Israel',
+    'rights.israel.condition3': 'Retraso no debido a circunstancias extraordinarias',
+    'rights.timeline.years6': 'Años',
+    'rights.timeline.years2': 'Años',
+    'rights.timeline.year1': 'Año',
+    'rights.timeline.years6Desc': 'Plazo máximo para reclamar según la regulación europea',
+    'rights.timeline.years2Desc': 'Plazo recomendado para reclamación efectiva',
+    'rights.timeline.year1Desc': 'Plazo para reclamaciones según la ley israelí',
+    'rights.cta.title': 'Verifica tus derechos ahora',
+    'rights.cta.description': 'Descubre si eres elegible para compensación en solo unos minutos',
+    'rights.cta.checkFlight': 'Verificar mi vuelo',
 
     // FAQ Page
     'faq.title': 'Preguntas frecuentes',
@@ -680,6 +933,13 @@ export const translations: Record<string, TranslationKeys> = {
     'faq.process.a1': 'Debes proporcionar tu tarjeta de embarque, boleto de avión, y cualquier documento que pruebe el retraso (notificaciones de la aerolínea, fotos de pantallas de información).',
     'faq.process.q2': '¿Qué pasa si la aerolínea se niega?',
     'faq.process.a2': 'Si la aerolínea se niega, podemos iniciar procedimientos legales para hacer valer tus derechos ante los tribunales competentes.',
+    'faq.help.title': '¿No encuentras tu respuesta?',
+    'faq.help.description': 'Nuestro equipo de expertos está aquí para ayudarte con todas tus preguntas',
+    'faq.help.contactUs': 'Contáctanos',
+    'faq.help.checkFlight': 'Verificar mi vuelo',
+    'faq.stats.responseTime': 'Tiempo de respuesta promedio',
+    'faq.stats.successRate': 'Tasa de éxito',
+    'faq.stats.freeSupport': 'Soporte gratuito',
 
     // Contact Page
     'contact.title': 'Contáctanos',
@@ -694,6 +954,31 @@ export const translations: Record<string, TranslationKeys> = {
     'contact.info.phone': '+33 1 23 45 67 89',
     'contact.info.address': '123 Avenue des Champs-Élysées, 75008 Paris, France',
     'contact.info.hours': 'Lun-Vie: 9h-18h, Sáb: 9h-13h',
+    'contact.form.title': 'Envíanos un mensaje',
+    'contact.form.description': 'Completa el formulario a continuación y te responderemos rápidamente',
+    'contact.form.subjectPlaceholder': 'Selecciona un asunto',
+    'contact.form.messagePlaceholder': 'Describe tu pregunta o problema en detalle...',
+    'contact.form.submitting': 'Enviando...',
+    'contact.info.emailDesc': 'Respuesta en 24h',
+    'contact.info.phoneDesc': 'Lun-Vie 9h-18h',
+    'contact.info.addressDesc': 'Oficina principal',
+    'contact.info.hoursDesc': 'Soporte al cliente',
+    'contact.subjects.general': 'Pregunta general',
+    'contact.subjects.claimIssue': 'Problema con mi reclamación',
+    'contact.subjects.statusRequest': 'Solicitud de estado',
+    'contact.subjects.technical': 'Pregunta técnica',
+    'contact.subjects.partnership': 'Asociación',
+    'contact.subjects.other': 'Otro',
+    'contact.quickActions.title': 'Acciones rápidas',
+    'contact.quickActions.checkFlight': 'Verificar mi vuelo',
+    'contact.quickActions.faq': 'Ver FAQ',
+    'contact.quickActions.howItWorks': 'Cómo funciona',
+    'contact.location.title': 'Nuestra ubicación',
+    'contact.location.mapPlaceholder': 'Mapa interactivo (por implementar)',
+    'contact.cta.title': '¿Listo para reclamar tu compensación?',
+    'contact.cta.description': 'Comienza ahora y recupera el dinero que te corresponde',
+    'contact.cta.checkFlight': 'Verificar mi vuelo',
+    'contact.cta.contactUs': 'Contáctanos',
 
     // Flight Search Form
     'form.flightNumber.label': 'Número de vuelo',

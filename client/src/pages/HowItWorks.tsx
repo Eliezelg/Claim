@@ -131,23 +131,23 @@ export default function HowItWorks() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Prêt à réclamer votre compensation ?
+              {t('howItWorks.cta.title')}
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Commencez dès maintenant et récupérez l'argent qui vous est dû
+              {t('howItWorks.cta.description')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/claim"
                 className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors"
               >
-                Vérifier mon vol
+                {t('howItWorks.cta.checkFlight')}
               </a>
               <a
                 href="/contact"
                 className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-600 transition-colors"
               >
-                Nous contacter
+                {t('howItWorks.cta.contactUs')}
               </a>
             </div>
           </div>

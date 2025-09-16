@@ -48,35 +48,35 @@ export default function Contact() {
       icon: Mail,
       title: "Email",
       value: t('contact.info.email'),
-      description: "Réponse sous 24h",
+      description: t('contact.info.emailDesc'),
     },
     {
       icon: Phone,
       title: "Téléphone",
       value: t('contact.info.phone'),
-      description: "Lun-Ven 9h-18h",
+      description: t('contact.info.phoneDesc'),
     },
     {
       icon: MapPin,
       title: "Adresse",
       value: t('contact.info.address'),
-      description: "Bureau principal",
+      description: t('contact.info.addressDesc'),
     },
     {
       icon: Clock,
       title: "Horaires",
       value: t('contact.info.hours'),
-      description: "Support client",
+      description: t('contact.info.hoursDesc'),
     },
   ];
 
   const subjects = [
-    "Question générale",
-    "Problème avec ma réclamation",
-    "Demande de statut",
-    "Question technique",
-    "Partenariat",
-    "Autre",
+    t('contact.subjects.general'),
+    t('contact.subjects.claimIssue'),
+    t('contact.subjects.statusRequest'),
+    t('contact.subjects.technical'),
+    t('contact.subjects.partnership'),
+    t('contact.subjects.other'),
   ];
 
   return (
@@ -104,9 +104,9 @@ export default function Contact() {
               {/* Contact Form */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-2xl">Envoyez-nous un message</CardTitle>
+                  <CardTitle className="text-2xl">{t('contact.form.title')}</CardTitle>
                   <p className="text-gray-600">
-                    Remplissez le formulaire ci-dessous et nous vous répondrons rapidement
+                    {t('contact.form.description')}
                   </p>
                 </CardHeader>
                 <CardContent>
@@ -142,7 +142,7 @@ export default function Contact() {
                         onValueChange={(value) => handleInputChange('subject', value)}
                       >
                         <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Sélectionnez un sujet" />
+                          <SelectValue placeholder={t('contact.form.subjectPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
                           {subjects.map((subject) => (
@@ -163,7 +163,7 @@ export default function Contact() {
                         required
                         rows={6}
                         className="mt-1"
-                        placeholder="Décrivez votre question ou problème en détail..."
+                        placeholder={t('contact.form.messagePlaceholder')}
                       />
                     </div>
                     
@@ -176,7 +176,7 @@ export default function Contact() {
                       {isSubmitting ? (
                         <div className="flex items-center gap-2">
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Envoi en cours...
+                          {t('contact.form.submitting')}
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -220,26 +220,26 @@ export default function Contact() {
                 {/* Quick Actions */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-xl">Actions rapides</CardTitle>
+                    <CardTitle className="text-xl">{t('contact.quickActions.title')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <a
                       href="/claim"
                       className="block w-full bg-blue-600 text-white text-center py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                     >
-                      Vérifier mon vol
+                      {t('contact.quickActions.checkFlight')}
                     </a>
                     <a
                       href="/faq"
                       className="block w-full border border-gray-300 text-gray-700 text-center py-3 px-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
                     >
-                      Consulter la FAQ
+                      {t('contact.quickActions.faq')}
                     </a>
                     <a
                       href="/how-it-works"
                       className="block w-full border border-gray-300 text-gray-700 text-center py-3 px-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
                     >
-                      Comment ça marche
+                      {t('contact.quickActions.howItWorks')}
                     </a>
                   </CardContent>
                 </Card>
@@ -254,12 +254,12 @@ export default function Contact() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Notre localisation
+              {t('contact.location.title')}
             </h2>
             <div className="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
               <div className="text-center">
                 <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">Carte interactive (à implémenter)</p>
+                <p className="text-gray-600">{t('contact.location.mapPlaceholder')}</p>
                 <p className="text-sm text-gray-500 mt-2">
                   {t('contact.info.address')}
                 </p>

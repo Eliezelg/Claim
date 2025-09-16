@@ -63,28 +63,28 @@ export default function YourRights() {
                   <div>
                     <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-green-600" />
-                      Conditions d'éligibilité
+                      {t('rights.eu.conditionsTitle')}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
-                        <p>Retard de 3h+ pour les vols long-courrier (&gt;3,500 km)</p>
+                        <p>{t('rights.eu.condition1')}</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
-                        <p>Retard de 2h+ pour les vols moyen-courrier (1,500-3,500 km)</p>
+                        <p>{t('rights.eu.condition2')}</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
-                        <p>Retard de 1h+ pour les vols court-courrier (&lt;1,500 km)</p>
+                        <p>{t('rights.eu.condition3')}</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
-                        <p>Annulation moins de 14 jours avant le départ</p>
+                        <p>{t('rights.eu.condition4')}</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
-                        <p>Refus d'embarquement pour surbooking</p>
+                        <p>{t('rights.eu.condition5')}</p>
                       </div>
                     </div>
                   </div>
@@ -92,7 +92,7 @@ export default function YourRights() {
                   <div>
                     <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                       <Euro className="w-5 h-5 text-green-600" />
-                      Montants de compensation
+                      {t('rights.eu.amountsTitle')}
                     </h3>
                     <div className="space-y-3">
                       {euAmounts.map((item, index) => (
@@ -131,20 +131,20 @@ export default function YourRights() {
                   <div>
                     <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-green-600" />
-                      Conditions d'éligibilité
+                      {t('rights.israel.conditionsTitle')}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-orange-600 rounded-full mt-2"></div>
-                        <p>Retard de 8h+ pour les vols internationaux</p>
+                        <p>{t('rights.israel.condition1')}</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-orange-600 rounded-full mt-2"></div>
-                        <p>Vol au départ ou à destination d'Israël</p>
+                        <p>{t('rights.israel.condition2')}</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-orange-600 rounded-full mt-2"></div>
-                        <p>Retard non dû à des circonstances extraordinaires</p>
+                        <p>{t('rights.israel.condition3')}</p>
                       </div>
                     </div>
                   </div>
@@ -152,7 +152,7 @@ export default function YourRights() {
                   <div>
                     <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                       <Euro className="w-5 h-5 text-green-600" />
-                      Montants de compensation
+                      {t('rights.israel.amountsTitle')}
                     </h3>
                     <div className="space-y-3">
                       {israelAmounts.map((item, index) => (
@@ -192,22 +192,22 @@ export default function YourRights() {
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <span className="text-2xl font-bold text-green-600">6</span>
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">Années</h3>
-                    <p className="text-gray-600">Délai maximum pour réclamer selon la réglementation européenne</p>
+                    <h3 className="text-lg font-semibold mb-2">{t('rights.timeline.years6')}</h3>
+                    <p className="text-gray-600">{t('rights.timeline.years6Desc')}</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <span className="text-2xl font-bold text-blue-600">2</span>
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">Ans</h3>
-                    <p className="text-gray-600">Délai recommandé pour une réclamation efficace</p>
+                    <h3 className="text-lg font-semibold mb-2">{t('rights.timeline.years2')}</h3>
+                    <p className="text-gray-600">{t('rights.timeline.years2Desc')}</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <span className="text-2xl font-bold text-orange-600">1</span>
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">An</h3>
-                    <p className="text-gray-600">Délai pour les réclamations selon le droit israélien</p>
+                    <h3 className="text-lg font-semibold mb-2">{t('rights.timeline.year1')}</h3>
+                    <p className="text-gray-600">{t('rights.timeline.year1Desc')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -221,16 +221,16 @@ export default function YourRights() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Vérifiez vos droits maintenant
+              {t('rights.cta.title')}
             </h2>
             <p className="text-xl text-green-100 mb-8">
-              Découvrez si vous êtes éligible à une compensation en quelques minutes
+              {t('rights.cta.description')}
             </p>
             <a
               href="/claim"
               className="bg-white text-green-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors inline-block"
             >
-              Vérifier mon vol
+              {t('rights.cta.checkFlight')}
             </a>
           </div>
         </div>
