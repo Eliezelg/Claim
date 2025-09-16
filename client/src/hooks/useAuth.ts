@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, setAccessToken, refreshAccessToken, queryClient } from "@/lib/queryClient";
+import { apiRequest, setAccessToken, refreshAccessToken, resetRefreshAttempts, getAccessToken, queryClient } from "@/lib/queryClient";
 import { useEffect, useState } from "react";
 
 export function useAuth() {
@@ -18,7 +18,7 @@ export function useAuth() {
   const { data: user, isLoading } = useQuery({
     queryKey: ["/api/auth/user"],
     retry: false,
-    enabled: initialized, // Only run after token initialization
+    enabled: initialized && !!getAccessToken(), // Only run after token initialization AND if we have a token
   });
   
   // Login mutation
@@ -27,6 +27,7 @@ export function useAuth() {
       const res = await apiRequest('POST', '/api/auth/login', { email, password });
       const data = await res.json();
       setAccessToken(data.accessToken);
+      resetRefreshAttempts(); // Reset refresh attempts on successful login
       return data;
     },
     onSuccess: () => {
@@ -46,6 +47,7 @@ export function useAuth() {
       const res = await apiRequest('POST', '/api/auth/register', userData);
       const data = await res.json();
       setAccessToken(data.accessToken);
+      resetRefreshAttempts(); // Reset refresh attempts on successful registration
       return data;
     },
     onSuccess: () => {

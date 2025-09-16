@@ -76,8 +76,30 @@ export function getAccessToken(): string | null {
   return accessToken;
 }
 
+// Track refresh attempts to prevent infinite loops
+let refreshAttempts = 0;
+const MAX_REFRESH_ATTEMPTS = 3;
+let lastRefreshAttempt = 0;
+const MIN_REFRESH_INTERVAL = 5000; // 5 seconds minimum between refresh attempts
+
 // Refresh token function
 export async function refreshAccessToken(): Promise<string | null> {
+  const now = Date.now();
+  
+  // Prevent too many refresh attempts
+  if (refreshAttempts >= MAX_REFRESH_ATTEMPTS) {
+    console.log('Max refresh attempts reached, stopping auto-refresh');
+    return null;
+  }
+  
+  // Prevent rapid refresh attempts
+  if (now - lastRefreshAttempt < MIN_REFRESH_INTERVAL) {
+    return null;
+  }
+  
+  lastRefreshAttempt = now;
+  refreshAttempts++;
+  
   try {
     const res = await fetch('/api/auth/refresh', {
       method: 'POST',
@@ -87,6 +109,7 @@ export async function refreshAccessToken(): Promise<string | null> {
     if (res.ok) {
       const data = await res.json();
       setAccessToken(data.accessToken);
+      refreshAttempts = 0; // Reset counter on success
       return data.accessToken;
     }
   } catch (error) {
@@ -96,6 +119,12 @@ export async function refreshAccessToken(): Promise<string | null> {
   // Clear token if refresh failed
   setAccessToken(null);
   return null;
+}
+
+// Reset refresh attempts (call this on successful login)
+export function resetRefreshAttempts() {
+  refreshAttempts = 0;
+  lastRefreshAttempt = 0;
 }
 
 export const getQueryFn: <T>(options: {
