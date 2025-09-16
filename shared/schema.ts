@@ -66,16 +66,7 @@ export const flightTypeEnum = pgEnum('flight_type', [
   'UNKNOWN'
 ]);
 
-// Session storage table (required for Replit Auth)
-export const sessions = pgTable(
-  "sessions",
-  {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
-  },
-  (table) => [index("IDX_session_expire").on(table.expire)],
-);
+// Sessions table removed - no longer needed with JWT authentication
 
 // User storage table (JWT Auth)
 export const users = pgTable("users", {

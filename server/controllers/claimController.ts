@@ -15,7 +15,7 @@ const createClaimRequestSchema = insertClaimSchema.extend({
 export class ClaimController {
   static async createClaim(req: any, res: Response) {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const claimData = createClaimRequestSchema.parse({
         ...req.body,
         userId,
@@ -41,7 +41,7 @@ export class ClaimController {
 
   static async getUserClaims(req: any, res: Response) {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const claims = await storage.getClaimsByUserId(userId);
       res.json(claims);
     } catch (error) {
@@ -52,7 +52,7 @@ export class ClaimController {
 
   static async getClaimById(req: any, res: Response) {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const claim = await storage.getClaimById(req.params.id, userId);
       
       if (!claim) {
@@ -68,7 +68,7 @@ export class ClaimController {
 
   static async updateClaimStatus(req: any, res: Response) {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { status } = req.body;
       
       // Verify claim belongs to user

@@ -38,7 +38,7 @@ export function generateAccessToken(user: User): string {
     role: user.role || 'USER'
   };
   const options: SignOptions = { expiresIn: ACCESS_TOKEN_TTL };
-  return jwt.sign(payload, JWT_SECRET, options);
+  return jwt.sign(payload, JWT_SECRET!, options);
 }
 
 export function generateRefreshToken(user: User): string {
@@ -48,12 +48,17 @@ export function generateRefreshToken(user: User): string {
     role: user.role || 'USER'
   };
   const options: SignOptions = { expiresIn: REFRESH_TOKEN_TTL };
-  return jwt.sign(payload, JWT_SECRET, options);
+  return jwt.sign(payload, JWT_SECRET!, options);
 }
 
 export function verifyToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    const decoded = jwt.verify(token, JWT_SECRET!) as any;
+    return {
+      userId: decoded.userId,
+      email: decoded.email,
+      role: decoded.role
+    } as JWTPayload;
   } catch (error) {
     return null;
   }

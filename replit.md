@@ -23,13 +23,13 @@ Preferred communication style: Simple, everyday language.
 - **Runtime**: Node.js with Express.js server
 - **Language**: TypeScript with ES modules
 - **Database ORM**: Drizzle ORM with PostgreSQL dialect
-- **Authentication**: Replit Auth with OpenID Connect and session management
+- **Authentication**: JWT-based authentication with access tokens and refresh tokens
 - **File Uploads**: Multer middleware for document handling
 - **API Design**: RESTful endpoints with consistent error handling
 
 ### Data Storage Solutions
 - **Primary Database**: PostgreSQL via Neon serverless
-- **Session Storage**: PostgreSQL table-based sessions using connect-pg-simple
+- **Token Storage**: In-memory access tokens with HttpOnly refresh token cookies
 - **File Storage**: Local filesystem for document uploads (uploads/ directory)
 - **Connection**: Neon serverless with WebSocket support
 
@@ -40,9 +40,9 @@ Preferred communication style: Simple, everyday language.
 - **Document Management**: Multi-type file upload system (boarding passes, receipts, IDs)
 
 ### Authentication and Authorization
-- **Provider**: Replit OpenID Connect authentication
-- **Session Management**: Server-side sessions with PostgreSQL storage
-- **User Storage**: Required user table schema for Replit Auth integration
+- **Provider**: JWT-based authentication with Argon2 password hashing
+- **Token Management**: Access tokens (15min) and refresh tokens (30d) stored in secure HttpOnly cookies
+- **User Storage**: User table schema with email/password authentication and role-based access control
 - **Middleware**: Protected routes with authentication checks
 
 ### Multi-language Support
@@ -55,7 +55,7 @@ Preferred communication style: Simple, everyday language.
 ### Third-party Services
 - **Neon Database**: PostgreSQL serverless database hosting
 - **SendGrid**: Email delivery service for notifications
-- **Replit Auth**: Authentication and user management service
+- **JWT Authentication**: Custom JWT-based authentication with secure token management
 
 ### Payment Integration
 - **Stripe**: Payment processing (React Stripe.js integration configured)

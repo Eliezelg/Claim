@@ -9,7 +9,7 @@ import { documentRoutes } from "./routes/documentRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // JWT Auth routes - replaces Replit Auth
+  // JWT Auth routes
   app.use('/api/auth', jwtAuthRoutes);
 
   // Register route modules
