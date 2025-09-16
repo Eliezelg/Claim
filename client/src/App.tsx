@@ -26,22 +26,10 @@ import Contact from "./pages/Contact";
 import { useEffect } from "react";
 
 function RootComponent() {
-  const { isAuthenticated, isLoading, user } = useAuth();
-  const { isAdmin, isSuperAdmin, userRole, isLoading: adminLoading } = useAdminAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  const { isAdmin } = useAdminAuth();
 
-  // Debug logging
-  console.log('RootComponent Debug:', {
-    isAuthenticated,
-    isLoading,
-    adminLoading,
-    user: user ? { id: user.id, email: user.email, role: user.role } : null,
-    isAdmin,
-    isSuperAdmin,
-    userRole
-  });
-
-  // Attendre que l'authentification soit complètement chargée
-  if (isLoading || adminLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -55,12 +43,10 @@ function RootComponent() {
 
   // Si l'utilisateur est admin, rediriger vers le dashboard admin
   if (isAdmin) {
-    console.log('Redirecting to admin dashboard');
     return <Redirect to="/admin" />;
   }
 
   // Sinon, afficher le dashboard utilisateur normal
-  console.log('Redirecting to user dashboard');
   return <Home />;
 }
 

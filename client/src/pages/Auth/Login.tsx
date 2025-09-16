@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,27 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { login, loginLoading } = useAuth();
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const { login, loginLoading, isAuthenticated } = useAuth();
+  const { isAdmin } = useAdminAuth();
   const { language, isRTL } = useLanguage();
   const [, setLocation] = useLocation();
+
+  // Handle redirect after successful login
+  useEffect(() => {
+    if (shouldRedirect && isAuthenticated) {
+      const returnTo = sessionStorage.getItem('returnTo');
+      if (returnTo) {
+        sessionStorage.removeItem('returnTo');
+        setLocation(returnTo);
+      } else if (isAdmin) {
+        setLocation('/admin');
+      } else {
+        setLocation('/dashboard');
+      }
+      setShouldRedirect(false);
+    }
+  }, [shouldRedirect, isAuthenticated, isAdmin, setLocation]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,11 +44,7 @@ export function Login() {
 
     try {
       await login({ email, password });
-      
-      // Redirect to the return URL or dashboard
-      const returnTo = sessionStorage.getItem('returnTo') || '/dashboard';
-      sessionStorage.removeItem('returnTo');
-      setLocation(returnTo);
+      setShouldRedirect(true);
     } catch (error) {
       setError("Email ou mot de passe incorrect");
       console.error("Login error:", error);
