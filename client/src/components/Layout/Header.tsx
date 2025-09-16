@@ -7,7 +7,7 @@ import { LanguageSelector } from "@/components/Common/LanguageSelector";
 import { Plane } from "lucide-react";
 
 export function Header() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const { language, isRTL } = useLanguage();
   const [location] = useLocation();
 
@@ -74,19 +74,21 @@ export function Header() {
                       {t('dashboard.title', language)}
                     </Button>
                   </Link>
-                  <a href="/api/logout" data-testid="button-logout">
-                    <Button variant="outline">
-                      Logout
-                    </Button>
-                  </a>
+                  <Button 
+                    variant="outline"
+                    onClick={() => logout()}
+                    data-testid="button-logout"
+                  >
+                    Logout
+                  </Button>
                 </>
               ) : (
                 <>
-                  <a href="/api/login" data-testid="button-signin">
+                  <Link href="/login" data-testid="button-signin">
                     <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                       {t('header.auth.signIn', language)}
                     </Button>
-                  </a>
+                  </Link>
                   <Link href="/claim" data-testid="button-get-started">
                     <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
                       {t('header.auth.getStarted', language)}

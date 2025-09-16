@@ -16,6 +16,8 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminClaims from "./pages/Admin/AdminClaims";
 import AdminUsers from "./pages/Admin/AdminUsers";
 import AdminReports from "./pages/Admin/AdminReports";
+import { Login } from "./pages/Auth/Login";
+import { Register } from "./pages/Auth/Register";
 
 function RootComponent() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -47,6 +49,8 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={RootComponent} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
       <Route path="/claim" component={ClaimFlow} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/admin" component={AdminDashboard} />

@@ -15,12 +15,38 @@ export async function apiRequest(
   // Handle FormData (for file uploads) - don't set Content-Type
   const isFormData = data instanceof FormData;
   
+  // Add Authorization header if we have a token
+  const headers: HeadersInit = !isFormData && data ? { "Content-Type": "application/json" } : {};
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
+  }
+  
   const res = await fetch(url, {
     method,
-    headers: !isFormData && data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     credentials: "include",
   });
+
+  // Handle 401 - try to refresh token and retry once
+  if (res.status === 401 && accessToken) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      // Retry the request with new token
+      const newHeaders = { ...headers };
+      newHeaders['Authorization'] = `Bearer ${newToken}`;
+      
+      const retryRes = await fetch(url, {
+        method,
+        headers: newHeaders,
+        body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
+        credentials: "include",
+      });
+      
+      await throwIfResNotOk(retryRes);
+      return retryRes;
+    }
+  }
 
   await throwIfResNotOk(res);
   return res;
@@ -37,6 +63,39 @@ function buildQueryString(params: Record<string, any>): string {
   });
   const queryString = searchParams.toString();
   return queryString ? `?${queryString}` : "";
+}
+
+// Token management
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string | null) {
+  accessToken = token;
+}
+
+export function getAccessToken(): string | null {
+  return accessToken;
+}
+
+// Refresh token function
+export async function refreshAccessToken(): Promise<string | null> {
+  try {
+    const res = await fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include', // Send refresh token cookie
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      setAccessToken(data.accessToken);
+      return data.accessToken;
+    }
+  } catch (error) {
+    console.error('Token refresh failed:', error);
+  }
+  
+  // Clear token if refresh failed
+  setAccessToken(null);
+  return null;
 }
 
 export const getQueryFn: <T>(options: {
@@ -59,9 +118,34 @@ export const getQueryFn: <T>(options: {
       url = queryKey.join("/") as string;
     }
 
+    // Add Authorization header if we have a token
+    const headers: HeadersInit = {};
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
     const res = await fetch(url, {
       credentials: "include",
+      headers,
     });
+
+    // Handle 401 - try to refresh token and retry once
+    if (res.status === 401 && accessToken) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        // Retry the request with new token
+        const retryRes = await fetch(url, {
+          credentials: "include",
+          headers: {
+            'Authorization': `Bearer ${newToken}`,
+          },
+        });
+        
+        if (retryRes.ok) {
+          return await retryRes.json();
+        }
+      }
+    }
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
       return null;
