@@ -1,0 +1,143 @@
+const fs = require('fs');
+
+// Read the i18n file
+const content = fs.readFileSync('client/src/lib/i18n.ts', 'utf8');
+
+// Find where the French translations start
+const frStart = content.indexOf('  fr: {');
+const heStart = content.indexOf('  he: {');
+const esStart = content.indexOf('  es: {');
+
+// Extract the English translations we added
+const enTranslations = `
+    // How It Works Page
+    'howItWorks.title': 'Comment ça marche',
+    'howItWorks.subtitle': 'Un processus simple et transparent pour récupérer votre compensation',
+    'howItWorks.processTitle': 'Notre processus en 5 étapes',
+    'howItWorks.step1.title': '1. Remplissez votre réclamation',
+    'howItWorks.step1.description': 'Entrez les détails de votre vol et téléchargez vos documents',
+    'howItWorks.step2.title': '2. Vérification automatique',
+    'howItWorks.step2.description': 'Notre système vérifie automatiquement votre éligibilité',
+    'howItWorks.step3.title': '3. Calcul de compensation',
+    'howItWorks.step3.description': 'Nous calculons le montant exact de votre compensation',
+    'howItWorks.step4.title': '4. Soumission à la compagnie',
+    'howItWorks.step4.description': 'Nous soumettons votre réclamation à la compagnie aérienne',
+    'howItWorks.step5.title': '5. Suivi et négociation',
+    'howItWorks.step5.description': 'Nous suivons votre dossier et négocions en votre nom',
+    'howItWorks.featuresTitle': 'Pourquoi choisir ClaimCompass ?',
+    'howItWorks.feature1.title': 'Règlementation UE 261/2004',
+    'howItWorks.feature1.description': 'Protection complète pour les vols européens',
+    'howItWorks.feature2.title': 'Droit israélien',
+    'howItWorks.feature2.description': 'Protection pour les vols impliquant Israël',
+    'howItWorks.feature3.title': 'Suivi en temps réel',
+    'howItWorks.feature3.description': 'Suivez l\'avancement de votre réclamation',
+    'howItWorks.cta.title': 'Prêt à commencer ?',
+    'howItWorks.cta.subtitle': 'Créez votre compte et soumettez votre première réclamation en quelques minutes',
+    'howItWorks.cta.getStarted': 'Commencer maintenant',
+    'howItWorks.cta.signIn': 'Se connecter',
+
+    // Your Rights Page
+    'yourRights.title': 'Vos droits',
+    'yourRights.subtitle': 'Connaissez vos droits en cas de retard, annulation ou refus d\'embarquement',
+    'yourRights.euTitle': 'Règlementation européenne (CE 261/2004)',
+    'yourRights.euSubtitle': 'Protection pour tous les vols au départ ou à l\'arrivée de l\'UE',
+    'yourRights.euRight1.title': 'Compensation financière',
+    'yourRights.euRight1.description': 'Jusqu\'à 600€ selon la distance et le délai',
+    'yourRights.euRight2.title': 'Assistance immédiate',
+    'yourRights.euRight2.description': 'Repas, hébergement et transport si nécessaire',
+    'yourRights.euRight3.title': 'Remboursement ou réacheminement',
+    'yourRights.euRight3.description': 'Choix entre remboursement complet ou vol alternatif',
+    'yourRights.compensationTitle': 'Montants de compensation',
+    'yourRights.compensationTable.distance': 'Distance',
+    'yourRights.compensationTable.delay2h': 'Retard 2-3h',
+    'yourRights.compensationTable.delay3h': 'Retard 3-4h',
+    'yourRights.compensationTable.delay4h': 'Retard >4h',
+    'yourRights.compensationTable.shortHaul': 'Court courrier (≤ 1,500 km)',
+    'yourRights.compensationTable.mediumHaul': 'Moyen courrier (1,500-3,500 km)',
+    'yourRights.compensationTable.longHaul': 'Long courrier (> 3,500 km)',
+    'yourRights.israelTitle': 'Droit israélien',
+    'yourRights.israelSubtitle': 'Protection supplémentaire pour les vols impliquant Israël',
+    'yourRights.israelRight1.title': 'Protection israélienne',
+    'yourRights.israelRight1.description': 'Droit israélien pour les vols impliquant Israël',
+    'yourRights.israelRight2.title': 'Délais de réclamation',
+    'yourRights.israelRight2.description': '2 ans pour les réclamations israéliennes',
+    'yourRights.importantTitle': 'Points importants à retenir',
+    'yourRights.important1': 'Les droits s\'appliquent même si vous avez acheté un billet à prix réduit',
+    'yourRights.important2': 'Les circonstances extraordinaires (météo, grève) peuvent limiter les droits',
+    'yourRights.important3': 'Vous avez 2 ans pour réclamer une compensation',
+
+    // FAQ Page
+    'faq.title': 'Questions fréquentes',
+    'faq.subtitle': 'Trouvez les réponses à vos questions sur les compensations de vol',
+    'faq.searchPlaceholder': 'Rechercher...',
+    'faq.noResults': 'Aucune question trouvée pour votre recherche.',
+    'faq.category.general': 'Général',
+    'faq.category.eligibility': 'Éligibilité',
+    'faq.category.documents': 'Documents',
+    'faq.category.payment': 'Paiement',
+    'faq.question1.question': 'Qu\'est-ce que ClaimCompass ?',
+    'faq.question1.answer': 'ClaimCompass est une plateforme qui vous aide à réclamer des compensations pour les vols retardés, annulés ou en cas de refus d\'embarquement, conformément aux réglementations européennes et israéliennes.',
+    'faq.question2.question': 'Combien coûte le service ?',
+    'faq.question2.answer': 'Notre service est gratuit. Nous ne prenons qu\'un pourcentage de la compensation obtenue, uniquement en cas de succès.',
+    'faq.question3.question': 'Combien de temps prend le processus ?',
+    'faq.question3.answer': 'Le processus complet peut prendre de 2 à 6 mois, selon la complexité du dossier et la réactivité de la compagnie aérienne.',
+    'faq.question4.question': 'Quand suis-je éligible à une compensation ?',
+    'faq.question4.answer': 'Vous êtes éligible si votre vol a été retardé de plus de 3 heures, annulé moins de 14 jours avant le départ, ou si vous avez été refusé à l\'embarquement, et que le vol est couvert par la réglementation UE ou israélienne.',
+    'faq.question5.question': 'Les circonstances extraordinaires affectent-elles mon éligibilité ?',
+    'faq.question5.answer': 'Oui, les circonstances extraordinaires (météo extrême, grève du personnel de sécurité, etc.) peuvent exonérer la compagnie de sa responsabilité. Cependant, nous évaluons chaque cas individuellement.',
+    'faq.question6.question': 'Quels documents dois-je fournir ?',
+    'faq.question6.answer': 'Vous devez fournir votre carte d\'embarquement, votre billet d\'avion, une pièce d\'identité, et tout document prouvant le retard ou l\'annulation (notifications, emails, etc.).',
+    'faq.question7.question': 'Puis-je soumettre des documents en photo ?',
+    'faq.question7.answer': 'Oui, vous pouvez photographier vos documents. Assurez-vous que le texte est lisible et que tous les détails importants sont visibles.',
+    'faq.question8.question': 'Comment recevrai-je ma compensation ?',
+    'faq.question8.answer': 'La compensation est généralement versée directement par la compagnie aérienne sur votre compte bancaire ou par chèque. Nous vous accompagnons tout au long du processus.',
+    'faq.question9.question': 'Quand dois-je payer vos honoraires ?',
+    'faq.question9.answer': 'Nos honoraires ne sont dus qu\'en cas de succès et sont déduits de la compensation reçue. Si nous n\'obtenons pas de compensation, vous ne payez rien.',
+    'faq.question10.question': 'Que faire si j\'ai d\'autres questions ?',
+    'faq.question10.answer': 'Notre équipe est là pour vous aider. Contactez-nous pour toute question.',
+    'faq.contact.title': 'Vous ne trouvez pas votre réponse ?',
+    'faq.contact.subtitle': 'Notre équipe est là pour vous aider. Contactez-nous pour toute question.',
+    'faq.contact.button': 'Nous contacter',
+
+    // Contact Page
+    'contact.title': 'Contactez-nous',
+    'contact.subtitle': 'Nous sommes là pour vous aider. N\'hésitez pas à nous contacter pour toute question.',
+    'contact.info.title': 'Informations de contact',
+    'contact.info.email': 'Email',
+    'contact.info.phone': 'Téléphone',
+    'contact.info.address': 'Adresse',
+    'contact.info.emailDesc': 'Réponse sous 24h',
+    'contact.info.phoneDesc': 'Lun-Ven 9h-18h',
+    'contact.info.addressDesc': 'France',
+    'contact.hours.title': 'Heures d\'ouverture',
+    'contact.hours.weekdays': 'Lundi - Vendredi',
+    'contact.hours.saturday': 'Samedi',
+    'contact.hours.sunday': 'Dimanche',
+    'contact.hours.closed': 'Fermé',
+    'contact.form.title': 'Envoyez-nous un message',
+    'contact.form.name': 'Nom complet',
+    'contact.form.email': 'Email',
+    'contact.form.subject': 'Sujet',
+    'contact.form.priority': 'Priorité',
+    'contact.form.message': 'Message',
+    'contact.form.messagePlaceholder': 'Décrivez votre question ou problème...',
+    'contact.form.submit': 'Envoyer le message',
+    'contact.form.success.title': 'Message envoyé !',
+    'contact.form.success.message': 'Nous vous répondrons dans les plus brefs délais.',
+    'contact.subjects.general': 'Question générale',
+    'contact.subjects.claim': 'Réclamation existante',
+    'contact.subjects.technical': 'Problème technique',
+    'contact.subjects.billing': 'Facturation',
+    'contact.subjects.other': 'Autre',
+    'contact.priorities.low': 'Faible',
+    'contact.priorities.normal': 'Normal',
+    'contact.priorities.high': 'Élevé',
+    'contact.priorities.urgent': 'Urgent',
+`;
+
+// Add French translations
+const frInsertPoint = content.indexOf("    'languages.en': 'English',", frStart);
+const newContent = content.slice(0, frInsertPoint) + enTranslations + content.slice(frInsertPoint);
+
+fs.writeFileSync('client/src/lib/i18n.ts', newContent);
+console.log('French translations added!');

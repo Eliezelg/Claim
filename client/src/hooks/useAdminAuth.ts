@@ -10,6 +10,16 @@ export function useAdminAuth() {
   const isAdmin = isAuthenticated && typedUser?.role && ['ADMIN', 'SUPERADMIN'].includes(typedUser.role);
   const isSuperAdmin = isAuthenticated && typedUser?.role === 'SUPERADMIN';
 
+  // Debug logging
+  console.log('useAdminAuth Debug:', {
+    isAuthenticated,
+    isLoading,
+    user: typedUser ? { id: typedUser.id, email: typedUser.email, role: typedUser.role } : null,
+    isAdmin,
+    isSuperAdmin,
+    userRole: typedUser?.role
+  });
+
   return {
     user: typedUser,
     isLoading,

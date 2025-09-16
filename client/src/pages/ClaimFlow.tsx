@@ -35,7 +35,7 @@ export default function ClaimFlow() {
       // Save current URL for redirect after login
       sessionStorage.setItem('returnTo', window.location.pathname + window.location.search);
       // Redirect to login
-      window.location.href = '/api/login';
+      window.location.href = '/login';
       return;
     }
     

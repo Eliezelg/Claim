@@ -31,34 +31,34 @@ export function Header() {
           
           {/* Navigation */}
           <nav className={`hidden md:flex space-x-8 ${isRTL ? 'space-x-reverse' : ''}`}>
-            <a 
-              href="#how-it-works" 
+            <Link 
+              href={`/${language}/how-it-works`}
               className="text-muted-foreground hover:text-foreground transition-colors"
               data-testid="link-how-it-works"
             >
               {t('header.nav.howItWorks', language)}
-            </a>
-            <a 
-              href="#your-rights" 
+            </Link>
+            <Link 
+              href={`/${language}/your-rights`}
               className="text-muted-foreground hover:text-foreground transition-colors"
               data-testid="link-your-rights"
             >
               {t('header.nav.yourRights', language)}
-            </a>
-            <a 
-              href="#faq" 
+            </Link>
+            <Link 
+              href={`/${language}/faq`}
               className="text-muted-foreground hover:text-foreground transition-colors"
               data-testid="link-faq"
             >
               {t('header.nav.faq', language)}
-            </a>
-            <a 
-              href="#contact" 
+            </Link>
+            <Link 
+              href={`/${language}/contact`}
               className="text-muted-foreground hover:text-foreground transition-colors"
               data-testid="link-contact"
             >
               {t('header.nav.contact', language)}
-            </a>
+            </Link>
           </nav>
           
           {/* Language selector and Auth */}

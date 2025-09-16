@@ -325,8 +325,8 @@ export class DatabaseStorage implements IStorage {
         and(
           eq(flights.flightNumber, flightNumber),
           and(
-            sql`${flights.flightDate} >= ${startOfDay}`,
-            sql`${flights.flightDate} <= ${endOfDay}`
+            sql`${flights.flightDate} >= ${startOfDay.toISOString()}`,
+            sql`${flights.flightDate} <= ${endOfDay.toISOString()}`
           )
         )
       );
@@ -355,8 +355,8 @@ export class DatabaseStorage implements IStorage {
       endOfDay.setHours(23, 59, 59, 999);
       
       const dateClause = and(
-        sql`${flights.flightDate} >= ${startOfDay}`,
-        sql`${flights.flightDate} <= ${endOfDay}`
+        sql`${flights.flightDate} >= ${startOfDay.toISOString()}`,
+        sql`${flights.flightDate} <= ${endOfDay.toISOString()}`
       )!;
       whereClause = and(whereClause, dateClause)!;
     }

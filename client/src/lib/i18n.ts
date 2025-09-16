@@ -8,6 +8,72 @@ export interface TranslationKeys {
   'header.auth.signIn': string;
   'header.auth.getStarted': string;
 
+  // How It Works Page
+  'howItWorks.title': string;
+  'howItWorks.subtitle': string;
+  'howItWorks.step1.title': string;
+  'howItWorks.step1.description': string;
+  'howItWorks.step2.title': string;
+  'howItWorks.step2.description': string;
+  'howItWorks.step3.title': string;
+  'howItWorks.step3.description': string;
+  'howItWorks.step4.title': string;
+  'howItWorks.step4.description': string;
+  'howItWorks.benefits.title': string;
+  'howItWorks.benefits.fast': string;
+  'howItWorks.benefits.legal': string;
+  'howItWorks.benefits.noWin': string;
+  'howItWorks.benefits.multilingual': string;
+
+  // Your Rights Page
+  'rights.title': string;
+  'rights.subtitle': string;
+  'rights.eu.title': string;
+  'rights.eu.description': string;
+  'rights.eu.conditions': string;
+  'rights.eu.amounts': string;
+  'rights.israel.title': string;
+  'rights.israel.description': string;
+  'rights.israel.conditions': string;
+  'rights.israel.amounts': string;
+  'rights.timeline.title': string;
+  'rights.timeline.description': string;
+
+  // FAQ Page
+  'faq.title': string;
+  'faq.subtitle': string;
+  'faq.general.title': string;
+  'faq.general.q1': string;
+  'faq.general.a1': string;
+  'faq.general.q2': string;
+  'faq.general.a2': string;
+  'faq.general.q3': string;
+  'faq.general.a3': string;
+  'faq.eligibility.title': string;
+  'faq.eligibility.q1': string;
+  'faq.eligibility.a1': string;
+  'faq.eligibility.q2': string;
+  'faq.eligibility.a2': string;
+  'faq.process.title': string;
+  'faq.process.q1': string;
+  'faq.process.a1': string;
+  'faq.process.q2': string;
+  'faq.process.a2': string;
+
+  // Contact Page
+  'contact.title': string;
+  'contact.subtitle': string;
+  'contact.form.name': string;
+  'contact.form.email': string;
+  'contact.form.subject': string;
+  'contact.form.message': string;
+  'contact.form.submit': string;
+  'contact.info.title': string;
+  'contact.info.email': string;
+  'contact.info.phone': string;
+  'contact.info.address': string;
+  'contact.info.hours': string;
+
   // Hero Section
   'hero.title': string;
   'hero.subtitle': string;
@@ -104,6 +170,72 @@ export const translations: Record<string, TranslationKeys> = {
     'hero.trustIndicators.successRate': '98% success rate',
     'hero.cta.checkFlight': 'Check Your Flight',
 
+    // How It Works Page
+    'howItWorks.title': 'How it works',
+    'howItWorks.subtitle': 'Get your compensation in 4 simple steps',
+    'howItWorks.step1.title': '1. Search your flight',
+    'howItWorks.step1.description': 'Enter your flight number and date to check your eligibility for compensation',
+    'howItWorks.step2.title': '2. Check your eligibility',
+    'howItWorks.step2.description': 'Our calculator automatically analyzes your case according to EU and Israeli regulations',
+    'howItWorks.step3.title': '3. Complete your file',
+    'howItWorks.step3.description': 'Upload your documents (boarding pass, receipts) and complete your information',
+    'howItWorks.step4.title': '4. Receive your compensation',
+    'howItWorks.step4.description': 'We handle all the legal process and you receive your compensation directly',
+    'howItWorks.benefits.title': 'Why choose ClaimCompass?',
+    'howItWorks.benefits.fast': 'Fast and automated process',
+    'howItWorks.benefits.legal': 'Specialized legal expertise',
+    'howItWorks.benefits.noWin': 'No win, no fee',
+    'howItWorks.benefits.multilingual': 'Complete multilingual support',
+
+    // Your Rights Page
+    'rights.title': 'Your rights in case of flight disruption',
+    'rights.subtitle': 'Know your rights under European and Israeli regulations',
+    'rights.eu.title': 'European Regulation EC 261/2004',
+    'rights.eu.description': 'European regulation protects passengers in case of delay, cancellation or denied boarding',
+    'rights.eu.conditions': 'Eligibility conditions: 3h+ delay for long-haul flights, 2h+ for medium-haul flights, or 1h+ for short-haul flights',
+    'rights.eu.amounts': 'Amounts: €250 to €600 depending on flight distance',
+    'rights.israel.title': 'Israeli aviation law',
+    'rights.israel.description': 'Israeli aviation services law protects passengers on international flights',
+    'rights.israel.conditions': 'Eligibility conditions: 8h+ delay for international flights to/from Israel',
+    'rights.israel.amounts': 'Amounts: Up to 1,500 NIS depending on delay duration',
+    'rights.timeline.title': 'Claim deadlines',
+    'rights.timeline.description': 'You have up to 6 years to claim your compensation under European regulation',
+
+    // FAQ Page
+    'faq.title': 'Frequently asked questions',
+    'faq.subtitle': 'Find answers to your questions about flight compensation',
+    'faq.general.title': 'General questions',
+    'faq.general.q1': 'What is EC 261/2004 regulation?',
+    'faq.general.a1': 'It is a European regulation that protects passengers in case of delay, cancellation or denied boarding. It guarantees financial compensation under certain conditions.',
+    'faq.general.q2': 'How long does the process take?',
+    'faq.general.a2': 'The complete process usually takes between 2 to 6 months, depending on the complexity of the case and the airline\'s responsiveness.',
+    'faq.general.q3': 'Are there any hidden fees?',
+    'faq.general.a3': 'No, our fees are only charged on success. If you don\'t receive compensation, you pay nothing.',
+    'faq.eligibility.title': 'Eligibility',
+    'faq.eligibility.q1': 'Is my flight eligible for compensation?',
+    'faq.eligibility.a1': 'Your flight is eligible if the delay is at least 3h for long-haul flights, 2h for medium-haul flights, or 1h for short-haul flights, and the delay is not due to extraordinary circumstances.',
+    'faq.eligibility.q2': 'Can I claim even if I accepted a replacement flight?',
+    'faq.eligibility.a2': 'Yes, accepting a replacement flight does not affect your right to financial compensation for the initial delay.',
+    'faq.process.title': 'Process',
+    'faq.process.q1': 'What documents do I need to provide?',
+    'faq.process.a1': 'You must provide your boarding pass, plane ticket, and any document proving the delay (airline notifications, photos of information screens).',
+    'faq.process.q2': 'What happens if the airline refuses?',
+    'faq.process.a2': 'If the airline refuses, we can initiate legal proceedings to enforce your rights before the competent courts.',
+
+    // Contact Page
+    'contact.title': 'Contact us',
+    'contact.subtitle': 'Our team is here to help you with your questions',
+    'contact.form.name': 'Full name',
+    'contact.form.email': 'Email address',
+    'contact.form.subject': 'Subject',
+    'contact.form.message': 'Your message',
+    'contact.form.submit': 'Send message',
+    'contact.info.title': 'Contact information',
+    'contact.info.email': 'contact@claimcompass.com',
+    'contact.info.phone': '+33 1 23 45 67 89',
+    'contact.info.address': '123 Avenue des Champs-Élysées, 75008 Paris, France',
+    'contact.info.hours': 'Mon-Fri: 9am-6pm, Sat: 9am-1pm',
+
     // Flight Search Form
     'form.flightNumber.label': 'Flight Number',
     'form.flightNumber.placeholder': 'e.g. LH123',
@@ -190,6 +322,72 @@ export const translations: Record<string, TranslationKeys> = {
     'hero.trustIndicators.successfulClaims': '+45,000 תביעות מוצלחות',
     'hero.trustIndicators.successRate': '98% שיעור הצלחה',
     'hero.cta.checkFlight': 'בדקו את הטיסה שלכם',
+
+    // How It Works Page
+    'howItWorks.title': 'איך זה עובד',
+    'howItWorks.subtitle': 'קבלו את הפיצוי שלכם ב-4 שלבים פשוטים',
+    'howItWorks.step1.title': '1. חפשו את הטיסה שלכם',
+    'howItWorks.step1.description': 'הכניסו את מספר הטיסה והתאריך כדי לבדוק את הזכאות לפיצוי',
+    'howItWorks.step2.title': '2. בדקו את הזכאות',
+    'howItWorks.step2.description': 'המחשבון שלנו מנתח אוטומטית את המקרה שלכם לפי התקנות האירופיות והישראליות',
+    'howItWorks.step3.title': '3. השלימו את התיק',
+    'howItWorks.step3.description': 'העלו את המסמכים (כרטיס עלייה למטוס, קבלות) והשלימו את הפרטים שלכם',
+    'howItWorks.step4.title': '4. קבלו את הפיצוי',
+    'howItWorks.step4.description': 'אנחנו מטפלים בכל התהליך המשפטי ואתם מקבלים את הפיצוי ישירות',
+    'howItWorks.benefits.title': 'למה לבחור ב-ClaimCompass?',
+    'howItWorks.benefits.fast': 'תהליך מהיר ואוטומטי',
+    'howItWorks.benefits.legal': 'מומחיות משפטית מקצועית',
+    'howItWorks.benefits.noWin': 'אין רווח - אין תשלום',
+    'howItWorks.benefits.multilingual': 'תמיכה רב-לשונית מלאה',
+
+    // Your Rights Page
+    'rights.title': 'הזכויות שלכם במקרה של הפרעה בטיסה',
+    'rights.subtitle': 'דעו את הזכויות שלכם לפי התקנות האירופיות והישראליות',
+    'rights.eu.title': 'תקנה אירופית EC 261/2004',
+    'rights.eu.description': 'התקנה האירופית מגנה על נוסעים במקרה של עיכוב, ביטול או סירוב עלייה למטוס',
+    'rights.eu.conditions': 'תנאי זכאות: עיכוב של 3+ שעות לטיסות ארוכות, 2+ שעות לטיסות בינוניות, או 1+ שעה לטיסות קצרות',
+    'rights.eu.amounts': 'סכומים: 250-600 יורו בהתאם למרחק הטיסה',
+    'rights.israel.title': 'חוק התעופה הישראלי',
+    'rights.israel.description': 'חוק שירותי התעופה הישראלי מגן על נוסעים בטיסות בינלאומיות',
+    'rights.israel.conditions': 'תנאי זכאות: עיכוב של 8+ שעות לטיסות בינלאומיות לישראל או מישראל',
+    'rights.israel.amounts': 'סכומים: עד 1,500 שקל בהתאם למשך העיכוב',
+    'rights.timeline.title': 'מועדי הגשת תביעה',
+    'rights.timeline.description': 'יש לכם עד 6 שנים להגיש תביעה לפיצוי לפי התקנה האירופית',
+
+    // FAQ Page
+    'faq.title': 'שאלות נפוצות',
+    'faq.subtitle': 'מצאו תשובות לשאלות שלכם על פיצויי טיסה',
+    'faq.general.title': 'שאלות כלליות',
+    'faq.general.q1': 'מהי תקנה EC 261/2004?',
+    'faq.general.a1': 'זוהי תקנה אירופית המגנה על נוסעים במקרה של עיכוב, ביטול או סירוב עלייה למטוס. היא מבטיחה פיצוי כספי בתנאים מסוימים.',
+    'faq.general.q2': 'כמה זמן לוקח התהליך?',
+    'faq.general.a2': 'התהליך המלא לוקח בדרך כלל בין 2 ל-6 חודשים, בהתאם למורכבות התיק ולזמינות חברת התעופה.',
+    'faq.general.q3': 'האם יש עמלות נסתרות?',
+    'faq.general.a3': 'לא, העמלות שלנו נגבות רק במקרה של הצלחה. אם לא תקבלו פיצוי, לא תשלמו כלום.',
+    'faq.eligibility.title': 'זכאות',
+    'faq.eligibility.q1': 'האם הטיסה שלי זכאית לפיצוי?',
+    'faq.eligibility.a1': 'הטיסה שלכם זכאית אם העיכוב הוא לפחות 3 שעות לטיסות ארוכות, 2 שעות לטיסות בינוניות, או שעה לטיסות קצרות, והעיכוב לא נגרם מנסיבות יוצאות דופן.',
+    'faq.eligibility.q2': 'האם אני יכול לתבוע גם אם קיבלתי טיסת חלופה?',
+    'faq.eligibility.a2': 'כן, קבלת טיסת חלופה לא משפיעה על הזכות שלכם לפיצוי כספי על העיכוב הראשוני.',
+    'faq.process.title': 'תהליך',
+    'faq.process.q1': 'אילו מסמכים אני צריך לספק?',
+    'faq.process.a1': 'עליכם לספק את כרטיס העלייה למטוס, כרטיס הטיסה, וכל מסמך המוכיח את העיכוב (הודעות של חברת התעופה, תמונות של מסכי מידע).',
+    'faq.process.q2': 'מה קורה אם חברת התעופה מסרבת?',
+    'faq.process.a2': 'אם חברת התעופה מסרבת, אנחנו יכולים ליזום הליכים משפטיים לאכיפת הזכויות שלכם בפני בתי המשפט המוסמכים.',
+
+    // Contact Page
+    'contact.title': 'צרו קשר',
+    'contact.subtitle': 'הצוות שלנו כאן לעזור לכם עם השאלות שלכם',
+    'contact.form.name': 'שם מלא',
+    'contact.form.email': 'כתובת אימייל',
+    'contact.form.subject': 'נושא',
+    'contact.form.message': 'ההודעה שלכם',
+    'contact.form.submit': 'שלח הודעה',
+    'contact.info.title': 'פרטי יצירת קשר',
+    'contact.info.email': 'contact@claimcompass.com',
+    'contact.info.phone': '+33 1 23 45 67 89',
+    'contact.info.address': '123 Avenue des Champs-Élysées, 75008 Paris, France',
+    'contact.info.hours': 'ב׳-ו׳: 9:00-18:00, ש׳: 9:00-13:00',
 
     // Flight Search Form
     'form.flightNumber.label': 'מספר טיסה',
@@ -278,6 +476,72 @@ export const translations: Record<string, TranslationKeys> = {
     'hero.trustIndicators.successRate': '98% de taux de réussite',
     'hero.cta.checkFlight': 'Vérifiez votre vol',
 
+    // How It Works Page
+    'howItWorks.title': 'Comment ça marche',
+    'howItWorks.subtitle': 'Récupérez votre indemnité en 4 étapes simples',
+    'howItWorks.step1.title': '1. Recherchez votre vol',
+    'howItWorks.step1.description': 'Entrez votre numéro de vol et la date pour vérifier votre éligibilité à une compensation',
+    'howItWorks.step2.title': '2. Vérifiez votre éligibilité',
+    'howItWorks.step2.description': 'Notre calculateur analyse automatiquement votre cas selon les réglementations UE et israélienne',
+    'howItWorks.step3.title': '3. Remplissez votre dossier',
+    'howItWorks.step3.description': 'Téléchargez vos documents (carte d\'embarquement, reçus) et complétez vos informations',
+    'howItWorks.step4.title': '4. Recevez votre compensation',
+    'howItWorks.step4.description': 'Nous nous occupons de tout le processus légal et vous recevez votre indemnité directement',
+    'howItWorks.benefits.title': 'Pourquoi choisir ClaimCompass ?',
+    'howItWorks.benefits.fast': 'Processus rapide et automatisé',
+    'howItWorks.benefits.legal': 'Expertise juridique spécialisée',
+    'howItWorks.benefits.noWin': 'Pas de frais si pas de gain',
+    'howItWorks.benefits.multilingual': 'Support multilingue complet',
+
+    // Your Rights Page
+    'rights.title': 'Vos droits en cas de vol perturbé',
+    'rights.subtitle': 'Connaissez vos droits selon les réglementations européennes et israéliennes',
+    'rights.eu.title': 'Réglementation européenne CE 261/2004',
+    'rights.eu.description': 'La réglementation européenne protège les passagers en cas de retard, d\'annulation ou de refus d\'embarquement',
+    'rights.eu.conditions': 'Conditions d\'éligibilité : Retard de 3h+ pour vols long-courrier, 2h+ pour vols moyen-courrier, ou 1h+ pour vols court-courrier',
+    'rights.eu.amounts': 'Montants : 250€ à 600€ selon la distance du vol',
+    'rights.israel.title': 'Droit israélien de l\'aviation',
+    'rights.israel.description': 'La loi israélienne sur les services aériens protège les passagers des vols internationaux',
+    'rights.israel.conditions': 'Conditions d\'éligibilité : Retard de 8h+ pour les vols internationaux au départ ou à destination d\'Israël',
+    'rights.israel.amounts': 'Montants : Jusqu\'à 1,500 NIS selon la durée du retard',
+    'rights.timeline.title': 'Délais de réclamation',
+    'rights.timeline.description': 'Vous avez jusqu\'à 6 ans pour réclamer votre compensation selon la réglementation européenne',
+
+    // FAQ Page
+    'faq.title': 'Questions fréquemment posées',
+    'faq.subtitle': 'Trouvez les réponses à vos questions sur les compensations de vol',
+    'faq.general.title': 'Questions générales',
+    'faq.general.q1': 'Qu\'est-ce que la réglementation CE 261/2004 ?',
+    'faq.general.a1': 'C\'est une réglementation européenne qui protège les passagers en cas de retard, d\'annulation ou de refus d\'embarquement. Elle garantit des compensations financières dans certaines conditions.',
+    'faq.general.q2': 'Combien de temps prend le processus ?',
+    'faq.general.a2': 'Le processus complet prend généralement entre 2 à 6 mois, selon la complexité du dossier et la réactivité de la compagnie aérienne.',
+    'faq.general.q3': 'Y a-t-il des frais cachés ?',
+    'faq.general.a3': 'Non, nos honoraires sont uniquement prélevés en cas de succès. Si vous ne recevez pas de compensation, vous ne payez rien.',
+    'faq.eligibility.title': 'Éligibilité',
+    'faq.eligibility.q1': 'Mon vol est-il éligible à une compensation ?',
+    'faq.eligibility.a1': 'Votre vol est éligible si le retard est d\'au moins 3h pour les vols long-courrier, 2h pour les vols moyen-courrier, ou 1h pour les vols court-courrier, et que le retard n\'est pas dû à des circonstances extraordinaires.',
+    'faq.eligibility.q2': 'Puis-je réclamer même si j\'ai accepté un vol de remplacement ?',
+    'faq.eligibility.a2': 'Oui, accepter un vol de remplacement n\'affecte pas votre droit à une compensation financière pour le retard initial.',
+    'faq.process.title': 'Processus',
+    'faq.process.q1': 'Quels documents dois-je fournir ?',
+    'faq.process.a1': 'Vous devez fournir votre carte d\'embarquement, votre billet d\'avion, et tout document prouvant le retard (notifications de la compagnie, photos des écrans d\'information).',
+    'faq.process.q2': 'Que se passe-t-il si la compagnie refuse ?',
+    'faq.process.a2': 'Si la compagnie refuse, nous pouvons engager des procédures légales pour faire valoir vos droits devant les tribunaux compétents.',
+
+    // Contact Page
+    'contact.title': 'Contactez-nous',
+    'contact.subtitle': 'Notre équipe est là pour vous aider avec vos questions',
+    'contact.form.name': 'Nom complet',
+    'contact.form.email': 'Adresse email',
+    'contact.form.subject': 'Sujet',
+    'contact.form.message': 'Votre message',
+    'contact.form.submit': 'Envoyer le message',
+    'contact.info.title': 'Informations de contact',
+    'contact.info.email': 'contact@claimcompass.com',
+    'contact.info.phone': '+33 1 23 45 67 89',
+    'contact.info.address': '123 Avenue des Champs-Élysées, 75008 Paris, France',
+    'contact.info.hours': 'Lun-Ven: 9h-18h, Sam: 9h-13h',
+
     // Flight Search Form
     'form.flightNumber.label': 'Numéro de vol',
     'form.flightNumber.placeholder': 'ex. LH123',
@@ -364,6 +628,72 @@ export const translations: Record<string, TranslationKeys> = {
     'hero.trustIndicators.successfulClaims': '+45,000 reclamaciones exitosas',
     'hero.trustIndicators.successRate': '98% tasa de éxito',
     'hero.cta.checkFlight': 'Verifica tu vuelo',
+
+    // How It Works Page
+    'howItWorks.title': 'Cómo funciona',
+    'howItWorks.subtitle': 'Obtén tu compensación en 4 pasos simples',
+    'howItWorks.step1.title': '1. Busca tu vuelo',
+    'howItWorks.step1.description': 'Ingresa tu número de vuelo y fecha para verificar tu elegibilidad para compensación',
+    'howItWorks.step2.title': '2. Verifica tu elegibilidad',
+    'howItWorks.step2.description': 'Nuestra calculadora analiza automáticamente tu caso según las regulaciones UE e israelíes',
+    'howItWorks.step3.title': '3. Completa tu expediente',
+    'howItWorks.step3.description': 'Sube tus documentos (tarjeta de embarque, recibos) y completa tu información',
+    'howItWorks.step4.title': '4. Recibe tu compensación',
+    'howItWorks.step4.description': 'Nos encargamos de todo el proceso legal y recibes tu compensación directamente',
+    'howItWorks.benefits.title': '¿Por qué elegir ClaimCompass?',
+    'howItWorks.benefits.fast': 'Proceso rápido y automatizado',
+    'howItWorks.benefits.legal': 'Experiencia legal especializada',
+    'howItWorks.benefits.noWin': 'Sin ganancia, sin pago',
+    'howItWorks.benefits.multilingual': 'Soporte multilingüe completo',
+
+    // Your Rights Page
+    'rights.title': 'Tus derechos en caso de interrupción de vuelo',
+    'rights.subtitle': 'Conoce tus derechos según las regulaciones europeas e israelíes',
+    'rights.eu.title': 'Regulación Europea EC 261/2004',
+    'rights.eu.description': 'La regulación europea protege a los pasajeros en caso de retraso, cancelación o denegación de embarque',
+    'rights.eu.conditions': 'Condiciones de elegibilidad: Retraso de 3h+ para vuelos de larga distancia, 2h+ para vuelos de media distancia, o 1h+ para vuelos de corta distancia',
+    'rights.eu.amounts': 'Cantidades: €250 a €600 según la distancia del vuelo',
+    'rights.israel.title': 'Ley israelí de aviación',
+    'rights.israel.description': 'La ley israelí de servicios aéreos protege a los pasajeros en vuelos internacionales',
+    'rights.israel.conditions': 'Condiciones de elegibilidad: Retraso de 8h+ para vuelos internacionales hacia/desde Israel',
+    'rights.israel.amounts': 'Cantidades: Hasta 1,500 NIS según la duración del retraso',
+    'rights.timeline.title': 'Plazos de reclamación',
+    'rights.timeline.description': 'Tienes hasta 6 años para reclamar tu compensación según la regulación europea',
+
+    // FAQ Page
+    'faq.title': 'Preguntas frecuentes',
+    'faq.subtitle': 'Encuentra respuestas a tus preguntas sobre compensación de vuelos',
+    'faq.general.title': 'Preguntas generales',
+    'faq.general.q1': '¿Qué es la regulación EC 261/2004?',
+    'faq.general.a1': 'Es una regulación europea que protege a los pasajeros en caso de retraso, cancelación o denegación de embarque. Garantiza compensación financiera bajo ciertas condiciones.',
+    'faq.general.q2': '¿Cuánto tiempo toma el proceso?',
+    'faq.general.a2': 'El proceso completo generalmente toma entre 2 a 6 meses, dependiendo de la complejidad del caso y la capacidad de respuesta de la aerolínea.',
+    'faq.general.q3': '¿Hay tarifas ocultas?',
+    'faq.general.a3': 'No, nuestras tarifas solo se cobran en caso de éxito. Si no recibes compensación, no pagas nada.',
+    'faq.eligibility.title': 'Elegibilidad',
+    'faq.eligibility.q1': '¿Mi vuelo es elegible para compensación?',
+    'faq.eligibility.a1': 'Tu vuelo es elegible si el retraso es de al menos 3h para vuelos de larga distancia, 2h para vuelos de media distancia, o 1h para vuelos de corta distancia, y el retraso no se debe a circunstancias extraordinarias.',
+    'faq.eligibility.q2': '¿Puedo reclamar incluso si acepté un vuelo de reemplazo?',
+    'faq.eligibility.a2': 'Sí, aceptar un vuelo de reemplazo no afecta tu derecho a compensación financiera por el retraso inicial.',
+    'faq.process.title': 'Proceso',
+    'faq.process.q1': '¿Qué documentos necesito proporcionar?',
+    'faq.process.a1': 'Debes proporcionar tu tarjeta de embarque, boleto de avión, y cualquier documento que pruebe el retraso (notificaciones de la aerolínea, fotos de pantallas de información).',
+    'faq.process.q2': '¿Qué pasa si la aerolínea se niega?',
+    'faq.process.a2': 'Si la aerolínea se niega, podemos iniciar procedimientos legales para hacer valer tus derechos ante los tribunales competentes.',
+
+    // Contact Page
+    'contact.title': 'Contáctanos',
+    'contact.subtitle': 'Nuestro equipo está aquí para ayudarte con tus preguntas',
+    'contact.form.name': 'Nombre completo',
+    'contact.form.email': 'Dirección de correo',
+    'contact.form.subject': 'Asunto',
+    'contact.form.message': 'Tu mensaje',
+    'contact.form.submit': 'Enviar mensaje',
+    'contact.info.title': 'Información de contacto',
+    'contact.info.email': 'contact@claimcompass.com',
+    'contact.info.phone': '+33 1 23 45 67 89',
+    'contact.info.address': '123 Avenue des Champs-Élysées, 75008 Paris, France',
+    'contact.info.hours': 'Lun-Vie: 9h-18h, Sáb: 9h-13h',
 
     // Flight Search Form
     'form.flightNumber.label': 'Número de vuelo',

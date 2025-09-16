@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { 
@@ -21,6 +22,7 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { user, isSuperAdmin } = useAdminAuth();
+  const { logout } = useAuth();
   const { language, isRTL } = useLanguage();
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -93,7 +95,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={() => window.location.href = '/api/logout'}
+                onClick={() => logout()}
                 data-testid="button-logout"
               >
                 <LogOut className="w-4 h-4" />

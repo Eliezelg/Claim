@@ -7,7 +7,7 @@ import { insertDocumentSchema } from "../../shared/schema";
 export class DocumentController {
   static async uploadDocument(req: any, res: Response) {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const claimId = req.params.id;
       
       // Verify claim belongs to user
@@ -43,7 +43,7 @@ export class DocumentController {
 
   static async getClaimDocuments(req: any, res: Response) {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const claimId = req.params.id;
       
       // Verify claim belongs to user

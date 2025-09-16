@@ -41,7 +41,7 @@ export function AdminRoute({ children, requireSuperAdmin = false }: AdminRoutePr
             <Button 
               onClick={() => {
                 sessionStorage.setItem('returnTo', window.location.pathname);
-                window.location.href = '/api/login';
+                window.location.href = '/login';
               }}
               className="w-full"
               data-testid="button-login"
