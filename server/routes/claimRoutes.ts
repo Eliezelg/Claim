@@ -1,7 +1,7 @@
 
 import { Router } from "express";
 import multer from 'multer';
-import { isAuthenticated } from "../replitAuth";
+import { requireAuth } from "../auth";
 import { ClaimController } from "../controllers/claimController";
 import { DocumentController } from "../controllers/documentController";
 
@@ -24,13 +24,13 @@ const upload = multer({
 const router = Router();
 
 // Claims
-router.post('/', isAuthenticated, ClaimController.createClaim);
-router.get('/', isAuthenticated, ClaimController.getUserClaims);
-router.get('/:id', isAuthenticated, ClaimController.getClaimById);
-router.patch('/:id/status', isAuthenticated, ClaimController.updateClaimStatus);
+router.post('/', requireAuth, ClaimController.createClaim);
+router.get('/', requireAuth, ClaimController.getUserClaims);
+router.get('/:id', requireAuth, ClaimController.getClaimById);
+router.patch('/:id/status', requireAuth, ClaimController.updateClaimStatus);
 
 // Documents
-router.post('/:id/documents', isAuthenticated, upload.single('file'), DocumentController.uploadDocument);
-router.get('/:id/documents', isAuthenticated, DocumentController.getClaimDocuments);
+router.post('/:id/documents', requireAuth, upload.single('file'), DocumentController.uploadDocument);
+router.get('/:id/documents', requireAuth, DocumentController.getClaimDocuments);
 
 export { router as claimRoutes };

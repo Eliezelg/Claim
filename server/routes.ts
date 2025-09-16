@@ -1,7 +1,5 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-// Remove Replit Auth - now using JWT
-// import { setupAuth } from "./replitAuth";
 
 // Import modular routes
 import jwtAuthRoutes from "./authRoutes"; // New JWT auth routes
